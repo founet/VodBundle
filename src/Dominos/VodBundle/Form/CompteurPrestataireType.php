@@ -13,16 +13,21 @@ use Dominos\VodBundle\Repository\PrestataireRepository;
 
 class CompteurPrestataireType extends AbstractType
 {
+    private $dates ;
+
+    public function __construct($dates){
+        $this->dates = $dates;
+    }
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-
-            $builder->add('datepresta');
-            $builder->add('nbrecodeday')
-                    ->add('nbrecodeused');
+            $dates = $this->dates;
+            $builder->add('datepresta','choice', array('choices' => $dates));
+            $builder->add('nbrecodeday');
+                    
 
     }
     

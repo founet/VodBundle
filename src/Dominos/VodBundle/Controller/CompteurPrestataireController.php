@@ -44,9 +44,7 @@ class CompteurPrestataireController extends Controller
         $entity->setPrestataire($prestataire);
         $form = $this->createCreateForm($entity);
         $form->handleRequest($request);
-        dump($entity);
-        var_dump($this->getNbreCodesDispo($entity));
-        die;
+       
         // Vérifie nbre codes à ventiller < nbre codes restants
         if($this->checkNbreCodesRestants($entity) == false){
             die("nbre codes à ventiller > nbre codes restants");
@@ -85,7 +83,7 @@ class CompteurPrestataireController extends Controller
     private function createCreateForm(Compteur $entity)
     {
         
-        $form = $this->createForm(new CompteurPrestataireType(), $entity, array(
+        $form = $this->createForm(new CompteurPrestataireType($entity->getPrestataire()->getPrestaPeriod()), $entity, array(
             'action' => $this->generateUrl('compteur_create_by_presta',array('id'=>$entity->getPrestataire()->getId())),
             'method' => 'POST',
         ));
@@ -110,6 +108,7 @@ class CompteurPrestataireController extends Controller
             'entity' => $entity,
             'prestataire' => $prestataire,
             'form'   => $form->createView(),
+            'nbrecodesrestants' => $this->getNbreCodesDispo($entity)
         ));
     }
 
@@ -170,7 +169,7 @@ class CompteurPrestataireController extends Controller
     private function createEditForm(Compteur $entity)
     {
 
-        $form = $this->createForm(new CompteurPrestataireType(), $entity, array(
+        $form = $this->createForm(new CompteurPrestataireType($entity->getPrestataire()->getPrestaPeriod()), $entity, array(
             'action' => $this->generateUrl('compteur_update_by_presta', array('idpresta'=>$entity->getPrestataire()->getId(),
                                                                               'id' => $entity->getId())),
             'method' => 'PUT',

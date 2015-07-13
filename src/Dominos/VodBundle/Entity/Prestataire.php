@@ -253,8 +253,11 @@ class Prestataire
         $daterange = new \DatePeriod($date, $interval ,$end_date);
         $dates = array();
         foreach($daterange as $date){
-            $date = $date->format('Y-m-d H:i:s');
-           $dates[$date] = $date;
+            if($date >= new \DateTime()) {
+                $date = $date->format('Y-m-d H:i:s');
+                $dates[$date] = $date;
+            }
+            
         }
         return $dates;
     }

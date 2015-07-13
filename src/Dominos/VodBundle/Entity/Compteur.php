@@ -46,7 +46,7 @@ class Compteur
      *
      * @ORM\Column(name="nbrecodeused", type="integer")
      */
-    private $nbrecodeused;
+    private $nbrecodeused = 0;
 
 
     /**
