@@ -1,0 +1,32 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>Compteur list</h1>
+
+    <table class="records_list" border="1">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Prestataire</th>
+                <th>Datepresta</th>
+                <th>Nbrecodeday</th>
+                <th>Nbrecodeused</th>
+               
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td>{{ entity.id }}</td>
+                <td><a href="{{ path('compteur_index_by_presta', { 'id': entity.prestataire.id }) }}">{{ entity.prestataire.nompresta }}</a></td>
+                <td>{{ entity.datepresta }}</td>
+                <td>{{ entity.nbrecodeday }}</td>
+                <td>{{ entity.nbrecodeused }}</td>
+                
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+       
+    {% endblock %}

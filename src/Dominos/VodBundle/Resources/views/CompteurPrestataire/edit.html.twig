@@ -1,0 +1,16 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>Compteur edit</h1>
+    <p>Vous avez {{nbrecodesrestants}} codes a votre disposition </p>
+    {{ form(edit_form) }}
+
+        <ul class="record_actions">
+    <li>
+        <a href="{{ path('compteur_index_by_presta',{ 'id': entity.prestataire.id }) }}">
+            Back to the list
+        </a>
+    </li>
+    <li>{{ form(delete_form) }}</li>
+</ul>
+{% endblock %}

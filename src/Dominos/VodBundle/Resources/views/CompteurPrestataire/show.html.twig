@@ -1,0 +1,40 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>Compteur</h1>
+
+    <table class="record_properties">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ entity.id }}</td>
+            </tr>
+            <tr>
+                <th>Datepresta</th>
+                <td>{{ entity.datepresta }}</td>
+            </tr>
+            <tr>
+                <th>Nbrecodeday</th>
+                <td>{{ entity.nbrecodeday }}</td>
+            </tr>
+            <tr>
+                <th>Nbrecodeused</th>
+                <td>{{ entity.nbrecodeused }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+        <ul class="record_actions">
+    <li>
+        <a href="{{ path('compteur_index_by_presta',{ 'id': entity.prestataire.id }) }}">
+            Back to the list
+        </a>
+    </li>
+    <li>
+        <a href="{{ path('compteur_edit_by_presta', { 'idpresta': entity.prestataire.id,'id': entity.id }) }}">
+            Edit
+        </a>
+    </li>
+    <li>{{ form(delete_form) }}</li>
+</ul>
+{% endblock %}

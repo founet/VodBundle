@@ -1,0 +1,47 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>Compteur list</h1>
+
+    <table class="records_list" border="1">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Prestataire</th>
+                <th>Datepresta</th>
+                <th>Nbrecodeday</th>
+                <th>Nbrecodeused</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td><a href="{{ path('compteur_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+                <td>{{ entity.prestataire.nompresta }}</td>
+                <td>{{ entity.datepresta }}</td>
+                <td>{{ entity.nbrecodeday }}</td>
+                <td>{{ entity.nbrecodeused }}</td>
+                <td>
+                <ul>
+                    <li>
+                        <a href="{{ path('compteur_show_by_presta', { 'idpresta': entity.prestataire.id,'id': entity.id }) }}">show</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('compteur_edit_by_presta', { 'idpresta': entity.prestataire.id,'id': entity.id }) }}">edit</a>
+                    </li>
+                </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+        <ul>
+        <li>
+            <a href="{{ path('compteur_new_by_presta',{'id': prestataire.id }) }}">
+                Create a new entry
+            </a>
+        </li>
+    </ul>
+    {% endblock %}

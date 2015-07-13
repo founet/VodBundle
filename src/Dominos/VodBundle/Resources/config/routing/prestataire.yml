@@ -1,0 +1,35 @@
+prestataire:
+    path:     /
+    defaults: { _controller: "DominosVodBundle:Prestataire:index" }
+
+prestataire_show:
+    path:     /{id}/show
+    defaults: { _controller: "DominosVodBundle:Prestataire:show" }
+
+prestataire_new:
+    path:     /new
+    defaults: { _controller: "DominosVodBundle:Prestataire:new" }
+
+prestataire_create:
+    path:     /create
+    defaults: { _controller: "DominosVodBundle:Prestataire:create" }
+    methods:  POST
+
+prestataire_edit:
+    path:     /{id}/edit
+    defaults: { _controller: "DominosVodBundle:Prestataire:edit" }
+
+prestataire_update:
+    path:     /{id}/update
+    defaults: { _controller: "DominosVodBundle:Prestataire:update" }
+    methods:  [POST, PUT]
+
+prestataire_delete:
+    path:     /{id}/delete
+    defaults: { _controller: "DominosVodBundle:Prestataire:delete" }
+    methods:  [POST, DELETE]
+
+prestataire_period:
+    path:     /period/{id}
+    defaults: { _controller: "DominosVodBundle:Prestataire:prestaPeriod" }
+    methods:  [GET]

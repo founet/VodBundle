@@ -1,0 +1,44 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>Menus</h1>
+
+    <table class="record_properties">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ entity.id }}</td>
+            </tr>
+            <tr>
+                <th>Magnum</th>
+                <td>{{ entity.magnum }}</td>
+            </tr>
+            <tr>
+                <th>Menu1</th>
+                <td>{{ entity.menu1 }}</td>
+            </tr>
+            <tr>
+                <th>Menu2</th>
+                <td>{{ entity.menu2 }}</td>
+            </tr>
+            <tr>
+                <th>Menu3</th>
+                <td>{{ entity.menu3 }}</td>
+            </tr>
+            <tr>
+                <th>Menu4</th>
+                <td>{{ entity.menu4 }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+        <ul class="record_actions">
+    <li>
+        <a href="{{ path('menus') }}">
+            Back to the list
+        </a>
+    </li>
+    
+    <li>{{ form(delete_form) }}</li>
+</ul>
+{% endblock %}

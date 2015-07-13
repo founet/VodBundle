@@ -1,0 +1,34 @@
+code:
+    path:     /
+    defaults: { _controller: "DominosVodBundle:Code:index" }
+
+code_show:
+    path:     /{id}/show
+    defaults: { _controller: "DominosVodBundle:Code:show" }
+
+code_new:
+    path:     /new
+    defaults: { _controller: "DominosVodBundle:Code:new" }
+
+code_replace:
+    path:     /replace
+    defaults: { _controller: "DominosVodBundle:Code:replace" }
+
+code_create:
+    path:     /create
+    defaults: { _controller: "DominosVodBundle:Code:create" }
+    methods:  POST
+
+code_edit:
+    path:     /{id}/edit
+    defaults: { _controller: "DominosVodBundle:Code:edit" }
+
+code_update:
+    path:     /{id}/update
+    defaults: { _controller: "DominosVodBundle:Code:update" }
+    methods:  [POST, PUT]
+
+code_delete:
+    path:     /{id}/delete
+    defaults: { _controller: "DominosVodBundle:Code:delete" }
+    methods:  [POST, DELETE]
