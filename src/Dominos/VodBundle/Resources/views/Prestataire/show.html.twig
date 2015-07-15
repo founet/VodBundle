@@ -7,19 +7,19 @@
         <tbody>
             <tr>
                 <th>Id</th>
-                <td>{{ entity.id }}</td>
+                <td>{{ prestataire.id }}</td>
             </tr>
             <tr>
                 <th>Nompresta</th>
-                <td>{{ entity.nompresta }}</td>
+                <td>{{ prestataire.nompresta }}</td>
             </tr>
             <tr>
                 <th>Startpresta</th>
-                <td>{{ entity.startpresta|date('Y-m-d H:i:s') }}</td>
+                <td>{{ prestataire.startpresta|date('Y-m-d H:i:s') }}</td>
             </tr>
             <tr>
                 <th>Endpresta</th>
-                <td>{{ entity.endpresta|date('Y-m-d H:i:s') }}</td>
+                <td>{{ prestataire.endpresta|date('Y-m-d H:i:s') }}</td>
             </tr>
         </tbody>
     </table>
@@ -31,10 +31,10 @@
         </a>
     </li>
     <li>
-        <a href="{{ path('prestataire_edit', { 'id': entity.id }) }}">
+        <a href="{{ path('prestataire_edit', { 'id': prestataire.id }) }}">
             Edit
         </a>
     </li>
-    <li>{{ form(delete_form) }}</li>
+    <li>{{ form(delete_formpresta) }}</li>
 </ul>
 {% endblock %}

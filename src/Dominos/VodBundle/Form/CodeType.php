@@ -15,18 +15,7 @@ class CodeType extends AbstractType
      */
      public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('prestataires', 'entity', array(
-            'class'    => 'DominosVodBundle:Prestataire',
-            'choice_label' => 'nompresta',
-            'required' => false,
-            'empty_value' => 'Selectionner un prestataire',
-            'query_builder' => function(PrestataireRepository $r) {
-                return $r->getQueryPrestataires();
-            },
-            'multiple' => false,
-            'label'=>'Prestataires')
-        );
-    
+      
         $builder->add('codefile', 'file', array(
                                'constraints' => array(
                                   new File(array(

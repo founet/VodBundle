@@ -1,16 +1,26 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    <h1>Prestataire edit</h1>
+    <h1>Modifier un prestataire</h1>
+    {% for flashMessage in app.session.flashbag.get('error') %}
+            <div class="alert-box success radius">
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+    {{ form(formpresta) }}
 
-    {{ form(edit_form) }}
 
+<hr>
+
+    {{form(formmenu)}}
+    <hr>
+    {{form(formcode)}}
+ <a href="{{ path('compteur_index_by_presta', { 'id': prestataire.id }) }}">Ventiller</a>
         <ul class="record_actions">
     <li>
         <a href="{{ path('prestataire') }}">
             Back to the list
         </a>
     </li>
-    <li>{{ form(delete_form) }}</li>
 </ul>
 {% endblock %}

@@ -1,11 +1,3 @@
-dominos_vod_code:
-    resource: "@DominosVodBundle/Resources/config/routing/code.yml"
-    prefix:   /code
-
-dominos_vod_menus:
-    resource: "@DominosVodBundle/Resources/config/routing/menus.yml"
-    prefix:   /menus
-
 dominos_vod_compteur:
     resource: "@DominosVodBundle/Resources/config/routing/compteur.yml"
     prefix:   /compteur

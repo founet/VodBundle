@@ -5,9 +5,10 @@ namespace Dominos\VodBundle\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-use Dominos\VodBundle\Entity\Compteur;
 use Dominos\VodBundle\Entity\Prestataire;
 use Dominos\VodBundle\Form\CompteurPrestataireType;
+use Dominos\VodBundle\Entity\Code;
+use Dominos\VodBundle\Entity\Compteur;
 
 /**
  * Compteur controller.
@@ -23,13 +24,14 @@ class CompteurPrestataireController extends Controller
     public function indexAction(Request $request,$id)
     {
         $em = $this->getDoctrine()->getManager();
-
+        $compteur = new Compteur();
         $entities = $em->getRepository('DominosVodBundle:Compteur')->findByPrestataire($id,array('datepresta'=>'ASC'));
         $prestataire = $em->getRepository('DominosVodBundle:Prestataire')->find($id);
-
+        $compteur->setPrestataire($prestataire);
         return $this->render('DominosVodBundle:CompteurPrestataire:index.html.twig', array(
             'entities' => $entities,
-            'prestataire' => $prestataire
+            'prestataire' => $prestataire,
+            'compteur'=> $compteur
         ));
     }
     /**
@@ -47,13 +49,17 @@ class CompteurPrestataireController extends Controller
        
         // Vérifie nbre codes à ventiller < nbre codes restants
         if($this->checkNbreCodesRestants($entity) == false){
-            die("nbre codes à ventiller > nbre codes restants");
-            return $this->redirect($this->generateUrl('compteur_new'));
+            $this->get('session')
+            ->getFlashBag()
+            ->add('error', 'nombre codes à ventiller > nombre codes restants');
+            return $this->redirect($this->generateUrl('compteur_new_by_presta',array('id'=>$id)));
         }
         // Vérifie qu'il n'ya qu'un prestataire par jour 
         if($this->checkPrestataireByDay($entity) == false){
-            die("il y a déja un prestataire pour ce jour");
-             return $this->redirect($this->generateUrl('compteur_new'));
+             $this->get('session')
+            ->getFlashBag()
+            ->add('error', 'il y a déja un prestataire pour ce jour');
+             return $this->redirect($this->generateUrl('compteur_new_by_presta',array('id'=>$id)));
         }
 
         if ($form->isValid()) {
@@ -187,16 +193,25 @@ class CompteurPrestataireController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('DominosVodBundle:Compteur')->find($id);
-        // Vérifie nbre codes à ventiller < nbre codes restants
+       // Vérifie nbre codes à ventiller < nbre codes restants
         if($this->checkNbreCodesRestants($entity) == false){
-            die("nbre codes à ventiller > nbre codes restants");
-            return $this->redirect($this->generateUrl('compteur_new'));
+            $this->get('session')
+            ->getFlashBag()
+            ->add('error', 'nbre codes à ventiller > nbre codes restants');
+            return $this->redirect($this->generateUrl('compteur_edit_by_presta', array('idpresta'=>$entity->getPrestataire()->getId(),
+                                                                                        'id' => $entity->getId(),
+                                                                                        
+                                                                                        )));
         }
-
         // Vérifie qu'il n'ya qu'un prestataire par jour 
         if($this->checkPrestataireByDay($entity) == false){
-            die("il y a déja un prestataire pour ce jour");
-             return $this->redirect($this->generateUrl('compteur_new'));
+             $this->get('session')
+            ->getFlashBag()
+            ->add('error', 'il y a déja un prestataire pour ce jour');
+             return $this->redirect($this->generateUrl('compteur_edit_by_presta', array('idpresta'=>$entity->getPrestataire()->getId(),
+                                                                                        'id' => $entity->getId(),
+                                                                                        
+                                                                                        )));
         }
 
         if (!$entity) {
@@ -269,12 +284,11 @@ class CompteurPrestataireController extends Controller
 
         $nbrecodesrestants = $this->getNbreCodesDispo($compteur);
 
-        if($compteur->getNbreCodeRestants() > $nbrecodesrestants ){
+        if($compteur->getNbreCodeRestants() > $compteur->getNbreCodesDispo() ){
             return false;
         }else {
             return true;
         }
-       
     }
     /**
      * Vérifie qu'il n'y a qu'un prestataire par jour 
@@ -284,41 +298,25 @@ class CompteurPrestataireController extends Controller
     private function checkPrestataireByDay(Compteur $compteur){
         $em = $this->getDoctrine()->getManager();
         $nbrepresta = $em->getRepository('DominosVodBundle:Compteur')->NbrePrestaByDay($compteur);
-        if ($nbrepresta != 0) {
-            return false;
+        if($compteur->getId() == null){
+            $flag = ($nbrepresta == 0) ? true : false;
         }else {
-            return true;
+          $flag = ($nbrepresta == 1) ? true : false;
         }
+        
+        return $flag;
     }
-
-    /**
+/**
      * Recupère le nombre de codes dispo à l'édition
      * @param Compteur $compteur
      * @return Integer 
      */
     private function getNbreCodesDispo(Compteur $compteur){
-        $em = $this->getDoctrine()->getManager();
-        $nbrecodesnotused = $em->getRepository('DominosVodBundle:Compteur')->NbreCodesNotUsed($compteur);
-        if($compteur->getId()!= null) {
-            return $nbrecodesnotused + $compteur->getNbreCodeRestants() + $this->getNbreCodesNonVentilles($compteur->getPrestataire());
-        }
-        else {
-            return  $nbrecodesnotused + $this->getNbreCodesNonVentilles($compteur->getPrestataire());
-        }
+
+            return $compteur->getNbreCodesDispo();
     }
 
-    /**
-     * Recupère le nombre de codes non ventillés
-     * @param Compteur $compteur
-     * @return Integer 
-     */
-    private function getNbreCodesNonVentilles(Prestataire $prestataire){
-        $em = $this->getDoctrine()->getManager();
-        $nbreCodeTotal = $em->getRepository('DominosVodBundle:Code')->NbreTotalDispo($prestataire);
-        $nbreCodesVentilles = $em->getRepository('DominosVodBundle:Compteur')->NbreCodesVentillesByPresta($prestataire);
-        $NbreCodesNonVentilles = $nbreCodeTotal - $nbreCodesVentilles;
-        
-        return $NbreCodesNonVentilles;
-    }
+    
+    
 
 }

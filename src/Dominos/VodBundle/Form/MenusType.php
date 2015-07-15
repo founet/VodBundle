@@ -27,17 +27,6 @@ class MenusType extends AbstractType
                                )
                            )
                 );
-        $builder->add('prestataires', 'entity', array(
-            'class'    => 'DominosVodBundle:Prestataire',
-            'choice_label' => 'nompresta',
-            'required' => false,
-            'empty_value' => 'Selectionner un prestataire',
-            'query_builder' => function(PrestataireRepository $r) {
-                return $r->getQueryPrestataires();
-            },
-            'multiple' => false,
-            'label'=>'Prestataires')
-        );
     
     }
     

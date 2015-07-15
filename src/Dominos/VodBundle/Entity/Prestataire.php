@@ -261,4 +261,98 @@ class Prestataire
         }
         return $dates;
     }
+
+    /**
+    * Get Nombre de codes utilisés
+    * 
+    */
+    public function getNbreCodeUsed(){
+        $compteur = 0;
+        $codes = $this->codes;
+        foreach ($codes as $code) {
+          if($code->getDateused() != null){
+            $compteur++;
+          }
+        }
+        return $compteur;
+    }
+    /**
+    * Get Nombre de codes Total
+    * 
+    */
+    public function getNbreCodeTotal(){
+        return count($this->codes);
+    }
+
+    /**
+    * Get Nombre de codes non utilisés
+    * 
+    */
+    public function getNbreCodeNotUsed(){
+        return $this->getNbreCodeTotal() - $this->getNbreCodeUsed();
+    }
+    /**
+    * Savoir si le prestaire à des menus
+    * 
+    */
+    public function haveMenus(){
+
+        if(count($this->menus_presta) != 0){
+            return "OK";
+        }else {
+            return "A Faire";
+        }
+    }
+
+    /**
+    * Savoir si la ventillation est faites
+    * 
+    */
+    public function isVentiller(){
+
+        if(count($this->compteurs) != 0){
+            return "OK";
+        }else {
+            return "A Faire";
+        }
+    }
+
+    /**
+    * Get Nombre de codes compteurs
+    * 
+    */
+    public function getNbreCompteurTotal(){
+        $i = 0;
+        foreach ($this->compteurs as $compteur) {
+           $i = $i+$compteur->getNbrecodeday();
+        }
+        return $i;
+    }
+
+    /**
+    * Get Nombre de codes non ventillés
+    * 
+    */
+    public function getNbreCodesNonVentilles(){
+
+        $nbreCodeTotal = $this->getNbreCodeTotal();
+       
+        $nbreCodesVentilles = $this->getNbreCompteurTotal();
+        $NbreCodesNonVentilles = $nbreCodeTotal - $nbreCodesVentilles;
+        
+        return $NbreCodesNonVentilles; 
+    }
+
+    public function getDiffCompteur($datepresta){
+        $compteurs = $this->compteurs;
+        $compteurs_diff = array();
+        $now = new \DateTime();
+        foreach ($compteurs as $compteur) {
+           if(($compteur->getDatepresta() < $datepresta) && $compteur->getDatepresta() > $now ) {
+                $compteurs_diff [] = $compteur;
+           }
+        }
+        return count($compteurs_diff);
+    }
+
 }

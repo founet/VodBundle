@@ -7,8 +7,8 @@ prestataire_show:
     defaults: { _controller: "DominosVodBundle:Prestataire:show" }
 
 prestataire_new:
-    path:     /new
-    defaults: { _controller: "DominosVodBundle:Prestataire:new" }
+    path:     /new/{id}
+    defaults: { _controller: "DominosVodBundle:Prestataire:new",id:0 }
 
 prestataire_create:
     path:     /create
@@ -33,3 +33,13 @@ prestataire_period:
     path:     /period/{id}
     defaults: { _controller: "DominosVodBundle:Prestataire:prestaPeriod" }
     methods:  [GET]
+
+menus_create:
+    path:     /menus/{idpresta}/create
+    defaults: { _controller: "DominosVodBundle:Prestataire:createMenu" }
+    methods:  POST
+
+code_create:
+    path:     /codes/{idpresta}/create
+    defaults: { _controller: "DominosVodBundle:Prestataire:createCode" }
+    methods:  POST

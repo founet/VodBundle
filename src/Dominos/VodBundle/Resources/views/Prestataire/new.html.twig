@@ -2,9 +2,22 @@
 
 {% block body -%}
     <h1>Prestataire creation</h1>
+	{% for flashMessage in app.session.flashbag.get('error') %}
+		    <div class="alert-box success radius">
+		        {{ flashMessage }}
+		    </div>
+		{% endfor %}
+    {{ form(formpresta) }}
 
-    {{ form(form) }}
 
+<hr>
+
+{% if prestataire.id != 0 %}
+    {{form(formmenu)}}
+    <hr>
+    {{form(formcode)}}
+    <a href="{{ path('compteur_index_by_presta', { 'id': prestataire.id }) }}"></a>
+{% endif  %}
         <ul class="record_actions">
     <li>
         <a href="{{ path('prestataire') }}">

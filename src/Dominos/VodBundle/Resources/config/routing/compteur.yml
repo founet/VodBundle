@@ -1,34 +1,3 @@
-compteur:
-    path:     /
-    defaults: { _controller: "DominosVodBundle:Compteur:index" }
-
-compteur_show:
-    path:     /{id}/show
-    defaults: { _controller: "DominosVodBundle:Compteur:show" }
-
-compteur_new:
-    path:     /new
-    defaults: { _controller: "DominosVodBundle:Compteur:new" }
-
-compteur_create:
-    path:     /create
-    defaults: { _controller: "DominosVodBundle:Compteur:create" }
-    methods:  POST
-
-compteur_edit:
-    path:     /{id}/edit
-    defaults: { _controller: "DominosVodBundle:Compteur:edit" }
-
-compteur_update:
-    path:     /{id}/update
-    defaults: { _controller: "DominosVodBundle:Compteur:update" }
-    methods:  [POST, PUT]
-
-compteur_delete:
-    path:     /{id}/delete
-    defaults: { _controller: "DominosVodBundle:Compteur:delete" }
-    methods:  [POST, DELETE]
-
 compteur_index_by_presta:
     path:     /prestataire/{id}/list
     defaults: { _controller: "DominosVodBundle:CompteurPrestataire:index" }
@@ -54,3 +23,8 @@ compteur_update_by_presta:
     path:     /prestataire/{idpresta}/update/{id}
     defaults: { _controller: "DominosVodBundle:CompteurPrestataire:update" }
     methods:  [POST, PUT]
+
+compteur_delete:
+    path:     /{id}/delete
+    defaults: { _controller: "DominosVodBundle:CompteurPrestataire:delete" }
+    methods:  [POST, DELETE]

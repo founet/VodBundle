@@ -1,25 +1,31 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    <h1>Prestataire list</h1>
-
+    <h1>Administration VOD</h1>
+<p><a href="#">Gérer les menus </a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Gérer les codes</a></p>
     <table class="records_list" border="1">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Nompresta</th>
-                <th>Startpresta</th>
-                <th>Endpresta</th>
+                <th>Prestataires</th>
+                <th>Début</th>
+                <th>Fin</th>
+                <th>Codes Utilisés</th>
+                <th>Codes Restants</th>
+                <th>Menus</th>
+                <th>Ventillation</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
         {% for entity in entities %}
             <tr>
-                <td><a href="{{ path('prestataire_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
-                <td>{{ entity.nompresta }}</td>
-                <td>{% if entity.startpresta %}{{ entity.startpresta|date('Y-m-d H:i:s') }}{% endif %}</td>
-                <td>{% if entity.endpresta %}{{ entity.endpresta|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>({{ entity.id }}){{ entity.nompresta }}</td>
+                <td>{% if entity.startpresta %}{{ entity.startpresta|date('d/m/Y H:i:s') }}{% endif %}</td>
+                <td>{% if entity.endpresta %}{{ entity.endpresta|date('d/m/Y H:i:s') }}{% endif %}</td>
+                <td>{{entity.getNbreCodeUsed}}</td>
+                <td>{{entity.getNbreCodeNotUsed}}</td>
+                <td>{{entity.haveMenus}}</td>
+                <td>{{entity.isVentiller}}</td>
                 <td>
                 <ul>
                     <li>
@@ -38,7 +44,7 @@
         <ul>
         <li>
             <a href="{{ path('prestataire_new') }}">
-                Create a new entry
+                Ajouter un prestataire
             </a>
         </li>
     </ul>
