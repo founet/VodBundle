@@ -4,7 +4,7 @@ namespace Dominos\VodBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
+use Symfony\Component\HttpFoundation\Response;
 use Dominos\VodBundle\Entity\Prestataire;
 use Dominos\VodBundle\Form\CompteurPrestataireType;
 use Dominos\VodBundle\Entity\Code;
@@ -28,215 +28,199 @@ class CompteurPrestataireController extends Controller
         $entities = $em->getRepository('DominosVodBundle:Compteur')->findByPrestataire($id,array('datepresta'=>'ASC'));
         $prestataire = $em->getRepository('DominosVodBundle:Prestataire')->find($id);
         $compteur->setPrestataire($prestataire);
+        $formAdd = $this->createCreateForm($compteur);
+        $formsEdit = array();
+        foreach ($entities as $entity) {
+            $formEdit = $this->createEditForm($entity)->createView();
+            $deleteForm = $this->createDeleteForm($entity->getId())->createView();
+            $formsEdit[] = array($formEdit,$deleteForm);
+        }
+       
         return $this->render('DominosVodBundle:CompteurPrestataire:index.html.twig', array(
-            'entities' => $entities,
             'prestataire' => $prestataire,
-            'compteur'=> $compteur
+            'formAdd'=>$formAdd->createView(),
+            'formsEdit'=>$formsEdit,
         ));
     }
     /**
-     * Creates a new Compteur entity.
+     * Creates a new Compteur compteur.
      *
      */
     public function createAction(Request $request,$id)
     {
-        $entity = new Compteur();
+        $compteur = new Compteur();
         $em = $this->getDoctrine()->getManager();
         $prestataire = $em->getRepository('DominosVodBundle:Prestataire')->find($id);
-        $entity->setPrestataire($prestataire);
-        $form = $this->createCreateForm($entity);
+        $compteur->setPrestataire($prestataire);
+        $form = $this->createCreateForm($compteur);
         $form->handleRequest($request);
        
-        // Vérifie nbre codes à ventiller < nbre codes restants
-        if($this->checkNbreCodesRestants($entity) == false){
+        // Vérifie nbre codes à ventiller est différent de zéro
+        if($compteur->getNbrecodeday() == 0){
             $this->get('session')
             ->getFlashBag()
-            ->add('error', 'nombre codes à ventiller > nombre codes restants');
-            return $this->redirect($this->generateUrl('compteur_new_by_presta',array('id'=>$id)));
+            ->add('error', 'Le nombre codes à ventiller doit être supérieur à zéro');
+            return $this->redirect($this->generateUrl('compteur_index_by_presta',array('id'=>$id)));
+        }
+
+        // Vérifie nbre codes à ventiller < nbre codes restants
+        if($this->checkNbreCodesRestants($compteur) == false){
+            $this->get('session')
+            ->getFlashBag()
+            ->add('error', 'Le nombre de codes à ventiller est supérieur au nombre de codes restants');
+            return $this->redirect($this->generateUrl('compteur_index_by_presta',array('id'=>$id)));
         }
         // Vérifie qu'il n'ya qu'un prestataire par jour 
-        if($this->checkPrestataireByDay($entity) == false){
+        if($this->checkPrestataireByDay($compteur) == false){
              $this->get('session')
             ->getFlashBag()
-            ->add('error', 'il y a déja un prestataire pour ce jour');
-             return $this->redirect($this->generateUrl('compteur_new_by_presta',array('id'=>$id)));
+            ->add('error', 'Il y a déjà un prestataire pour ce jour');
+             return $this->redirect($this->generateUrl('compteur_index_by_presta',array('id'=>$id)));
         }
 
         if ($form->isValid()) {
 
-            $em->persist($entity);
+            $em->persist($compteur);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('compteur_show_by_presta', array('idpresta'=>$entity->getPrestataire()->getId(),
-                                                                                        'id' => $entity->getId(),
+            return $this->redirect($this->generateUrl('compteur_index_by_presta', array('id'=>$compteur->getPrestataire()->getId(),
+                                                                                        
                                                                                         
                                                                                         )));
         }
+        $formsEdit = array();
+        $entities = $em->getRepository('DominosVodBundle:Compteur')->findByPrestataire($id,array('datepresta'=>'ASC'));
+        foreach ($entities as $compteur) {
+            $formEdit = $this->createEditForm($compteur)->createView();
+            $deleteForm = $this->createDeleteForm($compteur->getId())->createView();
+           $formsEdit[] = array($formEdit,$deleteForm);
+        }
+        $formAdd = $this->createCreateForm($compteur);
+        
 
-        return $this->render('DominosVodBundle:CompteurPrestataire:new.html.twig', array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
+        return $this->render('DominosVodBundle:CompteurPrestataire:index.html.twig', array(
+            'prestataire' => $prestataire,
+            'formAdd'=>$formAdd->createView(),
+            'formsEdit'=>$formsEdit,
         ));
     }
 
     /**
-     * Creates a form to create a Compteur entity.
+     * Creates a form to create a Compteur compteur.
      *
-     * @param Compteur $entity The entity
+     * @param Compteur $compteur The compteur
      *
      * @return \Symfony\Component\Form\Form The form
      */
-    private function createCreateForm(Compteur $entity)
+    private function createCreateForm(Compteur $compteur)
     {
-        
-        $form = $this->createForm(new CompteurPrestataireType($entity->getPrestataire()->getPrestaPeriod()), $entity, array(
-            'action' => $this->generateUrl('compteur_create_by_presta',array('id'=>$entity->getPrestataire()->getId())),
+
+        $form = $this->createForm(new CompteurPrestataireType($compteur->getPrestataire()->getPrestaPeriod()), $compteur, array(
+            'action' => $this->generateUrl('compteur_create_by_presta',array('id'=>$compteur->getPrestataire()->getId())),
             'method' => 'POST',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Create'));
+        $form->add('submit', 'submit', array('label' => 'Ajouter','attr'=>array('class'=>'btn btn-info')));
 
         return $form;
     }
 
-    /**
-     * Displays a form to create a new Compteur entity.
-     *
-     */
-    public function newAction($id)
-    {
-        $em = $this->getDoctrine()->getManager();
-        $entity = new Compteur();
-        $prestataire = $em->getRepository('DominosVodBundle:Prestataire')->find($id);
-        $entity->setPrestataire($prestataire);
-        $form   = $this->createCreateForm($entity);
-        return $this->render('DominosVodBundle:CompteurPrestataire:new.html.twig', array(
-            'entity' => $entity,
-            'prestataire' => $prestataire,
-            'form'   => $form->createView(),
-            'nbrecodesrestants' => $this->getNbreCodesDispo($entity)
-        ));
-    }
 
     /**
-     * Finds and displays a Compteur entity.
-     *
-     */
-    public function showAction($idpresta, $id)
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        $entity = $em->getRepository('DominosVodBundle:Compteur')->find($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Compteur entity.');
-        }
-
-        $deleteForm = $this->createDeleteForm($id);
-
-        return $this->render('DominosVodBundle:CompteurPrestataire:show.html.twig', array(
-            'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),
-        ));
-    }
-
-    /**
-     * Displays a form to edit an existing Compteur entity.
-     *
-     */
-    public function editAction($idpresta,$id)
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        $entity = $em->getRepository('DominosVodBundle:Compteur')->find($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Compteur entity.');
-        }
-
-        $editForm = $this->createEditForm($entity);
-        $deleteForm = $this->createDeleteForm($id);
-
-        return $this->render('DominosVodBundle:CompteurPrestataire:edit.html.twig', array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
-            'nbrecodesrestants' => $this->getNbreCodesDispo($entity)
-        ));
-    }
-
-    /**
-    * Creates a form to edit a Compteur entity.
+    * Creates a form to edit a Compteur compteur.
     *
-    * @param Compteur $entity The entity
+    * @param Compteur $compteur The compteur
     *
     * @return \Symfony\Component\Form\Form The form
     */
-    private function createEditForm(Compteur $entity)
+    private function createEditForm(Compteur $compteur)
     {
 
-        $form = $this->createForm(new CompteurPrestataireType($entity->getPrestataire()->getPrestaPeriod()), $entity, array(
-            'action' => $this->generateUrl('compteur_update_by_presta', array('idpresta'=>$entity->getPrestataire()->getId(),
-                                                                              'id' => $entity->getId())),
+        $form = $this->createForm(new CompteurPrestataireType($compteur->getPrestataire()->getPrestaPeriod()), $compteur, array(
+            'action' => $this->generateUrl('compteur_update_by_presta', array('idpresta'=>$compteur->getPrestataire()->getId(),
+                                                                              'id' => $compteur->getId())),
             'method' => 'PUT',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Update'));
+        $form->add('submit', 'submit', array('label' => 'Modifier','attr'=>array('class'=>'btn btn-info')));
 
         return $form;
     }
     /**
-     * Edits an existing Compteur entity.
+     * Edits an existing Compteur compteur.
      *
      */
-    public function updateAction(Request $request, $id)
+    public function updateAction(Request $request, $id,$idpresta)
     {
+
         $em = $this->getDoctrine()->getManager();
-        $entity = $em->getRepository('DominosVodBundle:Compteur')->find($id);
-       // Vérifie nbre codes à ventiller < nbre codes restants
-        if($this->checkNbreCodesRestants($entity) == false){
+        $compteur = $em->getRepository('DominosVodBundle:Compteur')->find($id);
+       
+        // Vérifie nbre codes à ventiller est différent de zéro
+        if($compteur->getNbrecodeday() == 0){
             $this->get('session')
             ->getFlashBag()
-            ->add('error', 'nbre codes à ventiller > nbre codes restants');
-            return $this->redirect($this->generateUrl('compteur_edit_by_presta', array('idpresta'=>$entity->getPrestataire()->getId(),
-                                                                                        'id' => $entity->getId(),
+            ->add('error', 'Le nombre codes à ventiller doit être supérieur à zéro');
+            return $this->redirect($this->generateUrl('compteur_index_by_presta', array('id'=>$compteur->getPrestataire()->getId()
                                                                                         
+                                                                                        )));
+        }
+        
+       // Vérifie nbre codes à ventiller < nbre codes restants
+        if($this->checkNbreCodesRestants($compteur) == false){
+
+            $this->get('session')
+            ->getFlashBag()
+            ->add('error', 'Le nombre de codes à ventiller est supérieur au nombre de codes restants');
+            return $this->redirect($this->generateUrl('compteur_index_by_presta', array('id'=>$compteur->getPrestataire()->getId()
                                                                                         )));
         }
         // Vérifie qu'il n'ya qu'un prestataire par jour 
-        if($this->checkPrestataireByDay($entity) == false){
+        if($this->checkPrestataireByDay($compteur) == false){
              $this->get('session')
             ->getFlashBag()
-            ->add('error', 'il y a déja un prestataire pour ce jour');
-             return $this->redirect($this->generateUrl('compteur_edit_by_presta', array('idpresta'=>$entity->getPrestataire()->getId(),
-                                                                                        'id' => $entity->getId(),
+            ->add('error', 'Il y a déjà un prestataire pour ce jour');
+             return $this->redirect($this->generateUrl('compteur_index_by_presta', array('id'=>$compteur->getPrestataire()->getId()
                                                                                         
                                                                                         )));
         }
 
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Compteur entity.');
+        if (!$compteur) {
+            throw $this->createNotFoundException('Unable to find Compteur compteur.');
         }
 
         $deleteForm = $this->createDeleteForm($id);
-        $editForm = $this->createEditForm($entity);
+        $editForm = $this->createEditForm($compteur);
         $editForm->handleRequest($request);
 
         if ($editForm->isValid()) {
             $em->flush();
 
-            return $this->redirect($this->generateUrl('compteur_show_by_presta', array('idpresta'=>$entity->getPrestataire()->getId(),
-                                                                                       'id' => $entity->getId())));
+            return $this->redirect($this->generateUrl('compteur_index_by_presta', array('id'=>$compteur->getPrestataire()->getId(),
+                                                                                       )));
         }
 
-        return $this->render('DominosVodBundle:CompteurPrestataire:edit.html.twig', array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
+        $formsEdit = array();
+        $entities = $em->getRepository('DominosVodBundle:Compteur')->findByPrestataire($idpresta,array('datepresta'=>'ASC'));
+        $prestataire = $em->getRepository('DominosVodBundle:Prestataire')->find($idpresta);
+        foreach ($entities as $compteur) {
+            $formEdit = $this->createEditForm($compteur)->createView();
+            $deleteForm = $this->createDeleteForm($compteur->getId())->createView();
+            $formsEdit[] = array($formEdit,$deleteForm);
+        }
+
+        $formAdd = $this->createCreateForm($compteur);
+        
+
+        return $this->render('DominosVodBundle:CompteurPrestataire:index.html.twig', array(
+            'prestataire' => $prestataire,
+            'compteur'=> $compteur,
+            'formAdd'=>$formAdd->createView(),
+            'formsEdit'=>$formsEdit,
         ));
     }
     /**
-     * Deletes a Compteur entity.
+     * Deletes a Compteur compteur.
      *
      */
     public function deleteAction(Request $request, $id)
@@ -244,25 +228,26 @@ class CompteurPrestataireController extends Controller
         $form = $this->createDeleteForm($id);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('DominosVodBundle:Compteur')->find($id);
+        $em = $this->getDoctrine()->getManager();
+        $compteur = $em->getRepository('DominosVodBundle:Compteur')->find($id);
 
-            if (!$entity) {
-                throw $this->createNotFoundException('Unable to find Compteur entity.');
-            }
-
-            $em->remove($entity);
-            $em->flush();
+        if (!$compteur) {
+            throw $this->createNotFoundException('Unable to find Compteur compteur.');
         }
 
-        return $this->redirect($this->generateUrl('compteur'));
+        $em->remove($compteur);
+        $em->flush();
+  
+
+     $response = new Response('ok');
+
+     return $response ;
     }
 
     /**
-     * Creates a form to delete a Compteur entity by id.
+     * Creates a form to delete a Compteur compteur by id.
      *
-     * @param mixed $id The entity id
+     * @param mixed $id The compteur id
      *
      * @return \Symfony\Component\Form\Form The form
      */
@@ -271,7 +256,7 @@ class CompteurPrestataireController extends Controller
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('compteur_delete', array('id' => $id)))
             ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
+            ->add('submit', 'submit', array('label' => 'Supprimer','attr'=>array('class'=>'btn btn-info compteurdelete','data-id'=>$id)))
             ->getForm()
         ;
     }
@@ -282,9 +267,11 @@ class CompteurPrestataireController extends Controller
      */
     private function checkNbreCodesRestants(Compteur $compteur){
 
-        $nbrecodesrestants = $this->getNbreCodesDispo($compteur);
-
-        if($compteur->getNbreCodeRestants() > $compteur->getNbreCodesDispo() ){
+        $nbrecodesrestants = $compteur->getPrestataire()->getNbreCodesDispo();
+        if(!is_null($compteur->getId())){
+             $nbrecodesrestants = $nbrecodesrestants + $compteur->getNbreCodeRestants();
+        }
+        if($compteur->getNbreCodeRestants() > $nbrecodesrestants  ){
             return false;
         }else {
             return true;
@@ -306,17 +293,6 @@ class CompteurPrestataireController extends Controller
         
         return $flag;
     }
-/**
-     * Recupère le nombre de codes dispo à l'édition
-     * @param Compteur $compteur
-     * @return Integer 
-     */
-    private function getNbreCodesDispo(Compteur $compteur){
 
-            return $compteur->getNbreCodesDispo();
-    }
-
-    
-    
 
 }

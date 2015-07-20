@@ -6,6 +6,3 @@ dominos_vod_prestataire:
     resource: "@DominosVodBundle/Resources/config/routing/prestataire.yml"
     prefix:   /prestataire
 
-dominos_vod_homepage:
-    path:     /hello/{name}
-    defaults: { _controller: DominosVodBundle:Admin:index }

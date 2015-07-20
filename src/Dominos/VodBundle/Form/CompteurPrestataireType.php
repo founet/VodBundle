@@ -6,8 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Dominos\VodBundle\Repository\PrestataireRepository;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 
 
@@ -26,8 +25,13 @@ class CompteurPrestataireType extends AbstractType
     {
             $dates = $this->dates;
             $builder->add('datepresta','choice', array('choices' => $dates));
-            $builder->add('nbrecodeday');
-                    
+            $builder->add('nbrecodeday','number', array(
+                                'constraints' => array(
+                                    new NotBlank(array(
+                                        'message' => 'Le champ Nombre de code ne doit être vide'
+                                    ))
+                                )
+                    ));
 
     }
     

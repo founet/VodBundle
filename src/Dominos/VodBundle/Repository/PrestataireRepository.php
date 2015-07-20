@@ -24,15 +24,15 @@ class PrestataireRepository extends EntityRepository {
 		return $count;
 	}
 
-	public function getQueryPrestataires(){
+	public function getPrestataires(){
 		$qb = $this->createQueryBuilder('p');
         $qb->where('p.endpresta >= :now')
-           ->andWhere('p.startpresta <= :now')
 			->setParameter('now', new \DateTime())
-            ->orderBy('p.nompresta');
+            ->orderBy('p.startpresta');
 
-        return $qb;
+        return $qb->getQuery()->getResult();
 	}
+
 
 	
 }

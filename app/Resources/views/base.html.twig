@@ -2,17 +2,43 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <title>{% block title %}Dominos - Administration VOD {% endblock %}</title>
+        <link rel="icon" type="image/png" href="logo.png" />
         {% block stylesheets %}
+         <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
              <link rel="stylesheet" href="{{asset('bundles/dominos/css/style.css')}}" type="text/css" />
+             <link rel="stylesheet" href="{{asset('bundles/dominos/css/material.css')}}" type="text/css" />
+             <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
         {% endblock %}
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+        <link rel="icon" type="image/jpg" href="{{ asset('bundles/dominos/img/dominos.co.in_favicon.jpg') }}" />
     </head>
     <body>
-        {% block body %}{% endblock %}
+       
+
+        <main class="main container-fluid">
+            <div class="vod-content">
+                <a href="{{ path('prestataire') }}" class="logolink">
+                    <h3 class="bloclogo"><img src="{{asset('bundles/dominos/img/logo.png')}}" title="" alt="" width="70" class="logo" /><span class="white" style="margin-left:80px">Administration VOD<span></h3>
+                </a>
+            </div>
+            <div class="row vod-content">
+
+                <div class="col-xs-2"></div>
+                <div class="col-xs-8">
+                    {% block body %}           
+                       
+                    {% endblock %}
+                </div>
+                <div class="col-xs-2"></div>
+            <div>
+         </main>
         {% block javascripts %}
             <script type="text/javascript" src="{{ asset('bundles/dominos/js/jquery.js') }}"></script>
+             <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+            <script type="text/javascript" src="{{ asset('bundles/dominos/js/material.min.js') }}"></script>
             <script type="text/javascript" src="{{ asset('bundles/dominos/js/main.js') }}"></script>
         {% endblock %}
+       
     </body>
+    </div>
 </html>

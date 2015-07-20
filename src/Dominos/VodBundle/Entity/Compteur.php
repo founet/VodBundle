@@ -155,19 +155,6 @@ class Compteur
         return  $this->nbrecodeday - $this->nbrecodeused;
     }
 
-    public function getNbreCodesDispo(){
-        $prestataire = $this->prestataire;
-        $nbrecodesnotused = $prestataire->getDiffCompteur($this->datepresta);
-        $nbreCodesNonVentilles = $prestataire->getNbreCodesNonVentilles();
-       
-        if($this->getId()!= null) {
-            return $nbrecodesnotused + $this->getNbreCodeRestants() + $nbreCodesNonVentilles;
-        }
-        else {
-            return  $nbrecodesnotused + $nbreCodesNonVentilles;
-        } 
-    }
-
 
 
 }

@@ -5,6 +5,7 @@ namespace Dominos\VodBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class PrestataireType extends AbstractType
 {
@@ -15,10 +16,23 @@ class PrestataireType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('nompresta')
-            ->add('startpresta')
-            ->add('endpresta')
+            ->add('nompresta','text', array(
+                        'constraints' => array(
+                            new NotBlank(array(
+                                'message' => 'Le champ Nom Prestataire ne doit être vide'
+                            ))
+                        )
+                    ))
+            ->add('startpresta','datetime',array(
+                                'widget'=> 'single_text',
+                                'format'=>'dd-MM-yyyy'))
+            ->add('endpresta','datetime',array(
+                                'widget'=> 'single_text',
+                                'format'=>'dd-MM-yyyy'))
         ;
+
+
+
     }
     
     /**

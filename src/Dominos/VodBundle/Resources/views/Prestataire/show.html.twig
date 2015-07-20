@@ -1,40 +1,65 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    <h1>Prestataire</h1>
-
-    <table class="record_properties">
+    <div class="white_title">
+        <h4 class="center">Infos Prestataire</h4>
+  </div>
+<div class="white formbloc">
+    <table class="table presentation">
         <tbody>
             <tr>
-                <th>Id</th>
+                <th>ID</th>
                 <td>{{ prestataire.id }}</td>
             </tr>
             <tr>
-                <th>Nompresta</th>
+                <th>Nom du prestataire</th>
                 <td>{{ prestataire.nompresta }}</td>
             </tr>
             <tr>
-                <th>Startpresta</th>
+                <th>Date de début</th>
                 <td>{{ prestataire.startpresta|date('Y-m-d H:i:s') }}</td>
             </tr>
             <tr>
-                <th>Endpresta</th>
+                <th>Date de fin</th>
                 <td>{{ prestataire.endpresta|date('Y-m-d H:i:s') }}</td>
             </tr>
         </tbody>
     </table>
+</div>
+{% if prestataire.getmenusPresta is not null %}
+<div class="white_title">
+        <h4 class="center">Menus par magasin</h4>
+  </div>
+<div class="white">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>N° Magasin </th>
+                <th>Menu 1 </th>
+                <th>Menu 2 </th>
+                <th>Menu 3 </th>
+                <th>Menu 4 </th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for menu in prestataire.getmenusPresta %}
+            <tr>
+                <td>{{menu.magnum}}</td>
+                <td>{{menu.menu1}} </td>
+                <td>{{menu.menu2}}</td>
+                <td>{{menu.menu3}}</td>
+                <td>{{menu.menu4}}</td>
+            </tr>
+         {% endfor %}   
+        </tbody>
+    </table>
+</div>
+{% endif %} 
+<div class="white formbloc center">
+ <a href="{{ path('prestataire_edit', { 'id': prestataire.id }) }}" class="btn btn-info">Modifier</a>
+ 
+ <a href="{{ path('prestataire') }}" class="btn btn-info">  Accueil </a>
+    
+</div>
 
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('prestataire') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>
-        <a href="{{ path('prestataire_edit', { 'id': prestataire.id }) }}">
-            Edit
-        </a>
-    </li>
-    <li>{{ form(delete_formpresta) }}</li>
-</ul>
 {% endblock %}

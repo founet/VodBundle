@@ -1,28 +1,90 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    <h1>Prestataire creation</h1>
-	{% for flashMessage in app.session.flashbag.get('error') %}
-		    <div class="alert-box success radius">
-		        {{ flashMessage }}
-		    </div>
+<div class="white_title">
+    <h4 class="center">Ajouter un prestataire</h4>
+</div>
+    	{% for flashMessage in app.session.flashbag.get('error') %}
+    		    <div class="alert alert-danger" >
+    		         {{ form_errors(formpresta) }}
+    		    </div>
 		{% endfor %}
-    {{ form(formpresta) }}
 
-
-<hr>
+        {% for flashMessage in app.session.flashbag.get('form_errors') %}
+        <div class="alert alert-danger" >
+            {{ flashMessage }}
+        </div>
+        {% endfor %}
+    <div class="white">
+        {{ form_start(formpresta,{'attr':{'class':'form-horizontal'}}) }}
+         <div class="form-group">
+            <div class="col-lg-2">
+                {{ form_label(formpresta.nompresta,'Nom du prestataire') }}
+            </div>
+            <div class="col-lg-10">
+                {{ form_widget(formpresta.nompresta) }}
+            </div>
+        </div>
+        <div class="form-group">
+             <div class="col-lg-2">
+                {{ form_label(formpresta.startpresta,'Date de début') }}
+             </div>
+            <div class="col-lg-10">
+                {{ form_widget(formpresta.startpresta) }}
+            </div>
+        </div>
+        <div class="form-group">
+             <div class="col-lg-2">
+                {{ form_label(formpresta.endpresta,'Date de Fin') }}
+             </div>
+            <div class="col-lg-10">
+                {{ form_widget(formpresta.endpresta) }}
+            </div>
+        </div>
+        {{ form_end(formpresta) }}
+</div>
 
 {% if prestataire.id != 0 %}
-    {{form(formmenu)}}
-    <hr>
-    {{form(formcode)}}
-    <a href="{{ path('compteur_index_by_presta', { 'id': prestataire.id }) }}"></a>
+   <div class="formbloc">
+<div class="white_title">
+    <h4 class="center">Ajouter des menus</h4>
+ </div>
+ <div class="white">
+    {{form_start(formmenu,{'attr':{'class':'form-horizontal'}})}}
+            <div class="form-group">
+             <div class="col-lg-2">
+                {{ form_label(formmenu.menufile,'Fichier CSV') }}
+             </div>
+            <div class="col-lg-10">
+                {{ form_widget(formmenu.menufile) }}
+            </div>
+        </div>
+    {{ form_end(formmenu) }}
+    </div>
+</div>
+<div class="formbloc">
+    <div class="white_title">
+        <h4 class="center">Ajouter des codes</h4>
+     </div>
+   <div class="white">
+    {{form_start(formcode,{'attr':{'class':'form-horizontal'}})}}
+            <div class="form-group">
+             <div class="col-lg-2">
+                {{ form_label(formcode.codefile,'Fichier CSV') }}
+             </div>
+            <div class="col-lg-10">
+                {{ form_widget(formcode.codefile) }}
+            </div>
+        </div>
+    {{ form_end(formcode) }}
+    </div>
+</div>
+
 {% endif  %}
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('prestataire') }}">
-            Back to the list
-        </a>
-    </li>
-</ul>
+    <div class="white formbloc center">
+ 
+ <a href="{{ path('prestataire') }}" class="btn btn-info">  Accueil </a>
+    
+</div>
+
 {% endblock %}

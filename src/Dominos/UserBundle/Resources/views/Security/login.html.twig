@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>{% block title %}Dominos - Administration VOD {% endblock %}</title>
+        <link rel="icon" type="image/png" href="logo.png" />
+        {% block stylesheets %}
+         <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+
+             <link rel="stylesheet" href="{{asset('bundles/dominos/css/material.css')}}" type="text/css" />
+
+        {% endblock %}
+        <link rel="icon" type="image/jpg" href="{{ asset('bundles/dominos/img/dominos.co.in_favicon.jpg') }}" />
+    </head>
+    <body>
+
+{% block fos_user_content %}
+{% if error %}
+    <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+{% endif %}
+<div class="container">
+<form action="{{ path("fos_user_security_check") }}" method="post" class="form-signin">
+ <h2 class="form-signin-heading">Connexion</h2>
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
+      <label for="inputEmail" class="">Nom d'utulisateur </label>
+    <input type="text" id="username" name="_username" value="{{ last_username }}" required="required" class="form-control" />
+
+      <label for="inputPassword" class="">Password</label>
+    <input type="password" id="password" name="_password" required="required" class="form-control" />
+
+    <input type="checkbox" id="remember_me" name="_remember_me" value="on" />
+    <label for="remember_me">Remember me</label>
+
+    <input type="submit" class="btn btn-lg btn-info btn-block" id="_submit" name="_submit" value="Connexion" />
+</form>
+<style type="text/css">
+.form-signin {
+  max-width: 330px;
+  padding: 15px;
+  margin:25% auto;
+}
+.form-signin .form-signin-heading,
+.form-signin .checkbox {
+  margin-bottom: 10px;
+}
+.form-signin .checkbox {
+  font-weight: normal;
+}
+.form-signin .form-control {
+  position: relative;
+  height: auto;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 10px;
+  font-size: 16px;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+.form-signin input[type="email"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+<style>
+    </div> <!-- /container -->
+{% endblock fos_user_content %}
+
+        {% block javascripts %}
+
+            <script type="text/javascript" src="{{ asset('bundles/dominos/js/material.min.js') }}"></script>
+
+        {% endblock %}
+        
+    </body>
+    </div>
+</html>
+

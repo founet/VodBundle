@@ -1,4 +1,0 @@
-MagNum,Menu1,Menu2,Menu3,Menu3
-1,a,b,c,d
-2,e,f,g,h
-3,i,j,k,l

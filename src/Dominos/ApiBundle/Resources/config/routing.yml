@@ -1,0 +1,11 @@
+menus_of_day:
+    path:     /prestataire/{idpresta}/magasin/{idmag}
+    defaults: { _controller: "DominosApiBundle:Api:menus" }
+
+get_code_to_burn:
+    path:     /code/prestataire/{idpresta}
+    defaults: { _controller: "DominosApiBundle:Api:getCode" }
+
+burn_code:
+    path:     /code/burn/{payload}
+    defaults: { _controller: "DominosApiBundle:Api:burnCode" }

@@ -152,7 +152,7 @@ class Prestataire
      * @param \Dominos\VodBundle\Entity\Menus $menusPresta
      * @return Prestataire
      */
-    public function addMenusPretum(\Dominos\VodBundle\Entity\Menus $menusPresta)
+    public function addMenusPresta(\Dominos\VodBundle\Entity\Menus $menusPresta)
     {
         $this->menus_presta[] = $menusPresta;
 
@@ -164,7 +164,7 @@ class Prestataire
      *
      * @param \Dominos\VodBundle\Entity\Menus $menusPresta
      */
-    public function removeMenusPretum(\Dominos\VodBundle\Entity\Menus $menusPresta)
+    public function removeMenusPresta(\Dominos\VodBundle\Entity\Menus $menusPresta)
     {
         $this->menus_presta->removeElement($menusPresta);
     }
@@ -253,12 +253,17 @@ class Prestataire
         $daterange = new \DatePeriod($date, $interval ,$end_date);
         $dates = array();
         foreach($daterange as $date){
-            if($date >= new \DateTime()) {
-                $date = $date->format('Y-m-d H:i:s');
+            //$now = new \DateTime();
+            //$now = $now->format('Y-m-d');
+            //$date = $date->format('Y-m-d');
+            //if($date >= $now) {
+               // $date = new \DateTime($date);
+                $date = $date->format('d-m-Y');
                 $dates[$date] = $date;
-            }
+           //}
             
         }
+        //$dates[$end_date] = $end_date;
         return $dates;
     }
 
@@ -324,7 +329,7 @@ class Prestataire
     public function getNbreCompteurTotal(){
         $i = 0;
         foreach ($this->compteurs as $compteur) {
-           $i = $i+$compteur->getNbrecodeday();
+           $i = $i+$compteur->getNbreCodeRestants();
         }
         return $i;
     }
@@ -343,16 +348,26 @@ class Prestataire
         return $NbreCodesNonVentilles; 
     }
 
-    public function getDiffCompteur($datepresta){
+    public function getDiffCompteur(){
         $compteurs = $this->compteurs;
-        $compteurs_diff = array();
+        $nbre = 0;
         $now = new \DateTime();
         foreach ($compteurs as $compteur) {
-           if(($compteur->getDatepresta() < $datepresta) && $compteur->getDatepresta() > $now ) {
-                $compteurs_diff [] = $compteur;
+           
+           if(( $compteur->getDatepresta()->format('Y-m-d') < $now->format('Y-m-d'))) {
+                $nbre = $nbre + $compteur->getNbreCodeRestants();
            }
         }
-        return count($compteurs_diff);
+        return $nbre;
+    }
+
+    public function getNbreCodesDispo(){
+       
+        $nbrecodesnotused = $this->getDiffCompteur();
+        $nbreCodesNonVentilles = $this->getNbreCodesNonVentilles();
+       
+        return  $nbrecodesnotused + $nbreCodesNonVentilles;
+
     }
 
 }

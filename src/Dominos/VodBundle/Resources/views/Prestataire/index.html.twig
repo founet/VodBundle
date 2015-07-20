@@ -1,9 +1,8 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    <h1>Administration VOD</h1>
-<p><a href="#">Gérer les menus </a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#">Gérer les codes</a></p>
-    <table class="records_list" border="1">
+   <div class="white">
+    <table class="table" >
         <thead>
             <tr>
                 <th>Prestataires</th>
@@ -23,16 +22,16 @@
                 <td>{% if entity.startpresta %}{{ entity.startpresta|date('d/m/Y H:i:s') }}{% endif %}</td>
                 <td>{% if entity.endpresta %}{{ entity.endpresta|date('d/m/Y H:i:s') }}{% endif %}</td>
                 <td>{{entity.getNbreCodeUsed}}</td>
-                <td>{{entity.getNbreCodeNotUsed}}</td>
+                <td>{{entity.getNbreCodesDispo}}</td>
                 <td>{{entity.haveMenus}}</td>
                 <td>{{entity.isVentiller}}</td>
                 <td>
                 <ul>
                     <li>
-                        <a href="{{ path('prestataire_show', { 'id': entity.id }) }}">show</a>
+                        <a href="{{ path('prestataire_show', { 'id': entity.id }) }}" class="btn btn-info">Afficher</a>
                     </li>
                     <li>
-                        <a href="{{ path('prestataire_edit', { 'id': entity.id }) }}">edit</a>
+                        <a href="{{ path('prestataire_edit', { 'id': entity.id }) }}" class="btn btn-info">Modifier</a>
                     </li>
                 </ul>
                 </td>
@@ -43,9 +42,10 @@
 
         <ul>
         <li>
-            <a href="{{ path('prestataire_new') }}">
+            <a href="{{ path('prestataire_new') }}" class="btn btn-info">
                 Ajouter un prestataire
             </a>
         </li>
     </ul>
+<div>
     {% endblock %}

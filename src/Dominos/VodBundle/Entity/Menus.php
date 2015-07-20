@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Menus
  *
  * @ORM\Table(name="vod_menus")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Dominos\VodBundle\Repository\MenusRepository")
  */
 class Menus
 {

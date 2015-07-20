@@ -4,7 +4,6 @@ namespace Dominos\VodBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 use Dominos\VodBundle\Entity\Prestataire;
 use Dominos\VodBundle\Form\PrestataireType;
@@ -29,7 +28,7 @@ class PrestataireController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entities = $em->getRepository('DominosVodBundle:Prestataire')->findAll();
+        $entities = $em->getRepository('DominosVodBundle:Prestataire')->getPrestataires();
 
         return $this->render('DominosVodBundle:Prestataire:index.html.twig', array(
             'entities' => $entities,
@@ -58,6 +57,8 @@ class PrestataireController extends Controller
                     ->add('error', 'Inscription impossible : déjà deux prestataires sur cette période');
                     return $this->redirect($this->generateUrl('prestataire_new'));
            }
+        } else {
+            die("error");
         }
 
         return $this->render('DominosVodBundle:Prestataire:new.html.twig', array(
@@ -87,7 +88,7 @@ class PrestataireController extends Controller
             'method' => 'POST',
         ));
 
-        $formpresta->add('submit', 'submit', array('label' => $label));
+        $formpresta->add('submit', 'submit', array('label' => $label,'attr'=>array('class'=>'btn btn-info')));
 
         return $formpresta;
     }
@@ -124,7 +125,7 @@ class PrestataireController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $prestataire = $em->getRepository('DominosVodBundle:Prestataire')->find($id);
-
+    
         if (!$prestataire) {
             throw $this->createNotFoundException('Unable to find Prestataire prestataire.');
         }
@@ -185,12 +186,16 @@ class PrestataireController extends Controller
         $formmenu = $this->createMenuCreateForm($prestataire);
         $formcode = $this->createCodeCreateForm($prestataire);
         $editForm->handleRequest($request);
-
+        
         if ($editForm->isValid()) {
             if($this->checkPrestaPeriod($prestataire)){
+
                $em->flush();  
            }else {
-                die("Inscription impossible : déjà deux prestataires sur cette période");
+                 $this->get('session')
+                    ->getFlashBag()
+                    ->add('error', 'Inscription impossible : déjà deux prestataires sur cette période');
+                      return $this->redirect($this->generateUrl('prestataire_edit', array('id' => $id)));
            }
            
             return $this->redirect($this->generateUrl('prestataire_edit', array('id' => $id)));
@@ -198,7 +203,7 @@ class PrestataireController extends Controller
 
         return $this->render('DominosVodBundle:Prestataire:edit.html.twig', array(
             'prestataire'      => $prestataire,
-            'edit_formpresta'   => $editForm->createView(),
+            'formpresta'   => $editForm->createView(),
             'delete_formpresta' => $deleteForm->createView(),
             'formmenu'     =>$formmenu->createView(),
             'formcode'     =>$formcode->createView(),
@@ -240,7 +245,7 @@ class PrestataireController extends Controller
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('prestataire_delete', array('id' => $id)))
             ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
+            ->add('submit', 'submit', array('label' => 'Delete','attr'=>array('class'=>'btn btn-info')))
             ->getForm()
         ;
     }
@@ -261,32 +266,6 @@ class PrestataireController extends Controller
          else {
             return false;
         }
-    }
-
-    /**
-     * Retourne toutes les dates d'un prestataire sur une période.
-     *
-     * @param mixed $id The prestataire id
-     *
-     * @return JSON 
-     */
-
-    public function prestaPeriodAction(Request $request, $id)
-    {
-        $em = $this->getDoctrine()->getManager();
-        $prestataire = $em->getRepository('DominosVodBundle:Prestataire')->find($id);
-        $date = $prestataire->getStartpresta();
-        $end_date = $prestataire->getEndpresta();
-        $interval = new \DateInterval('P1D');
-        $daterange = new \DatePeriod($date, $interval ,$end_date);
-        $dates = array();
-        foreach($daterange as $date){
-           $dates[] = $date->format('Y-m-d H:i:s');
-        }
-        
-        $response = new JsonResponse();
-        $response->setData($dates);
-        return $response;
     }
 
 
@@ -313,7 +292,7 @@ class PrestataireController extends Controller
             $formmenu->add('replace','hidden',array('data'=>'replace'));
         }
 
-        $formmenu->add('submit', 'submit', array('label' => $label));
+        $formmenu->add('submit', 'submit', array('label' => $label,'attr'=>array('class'=>'btn btn-info')));
 
         return $formmenu;
     }
@@ -332,7 +311,7 @@ class PrestataireController extends Controller
             'method' => 'POST',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Create'));
+        $form->add('submit', 'submit', array('label' => 'Ajouter','attr'=>array('class'=>'btn btn-info')));
 
         return $form;
     }
@@ -364,7 +343,7 @@ class PrestataireController extends Controller
             $file->move($docPath, $nameFile);
             $filepath = $docPath.$nameFile;
             $csv= file_get_contents($filepath);
-        
+            unlink($filepath);
             $presta_menus = array_map("str_getcsv", explode("\n", $csv));
 
            for ($i=1; $i < count($presta_menus); $i++) { 
@@ -388,7 +367,7 @@ class PrestataireController extends Controller
     }
 
 
-        /**
+    /**
      * Creates Codes entities.
      *
      */
@@ -415,7 +394,7 @@ class PrestataireController extends Controller
             $file->move($docPath, $nameFile);
             $filepath = $docPath.$nameFile;
             $csv= file_get_contents($filepath);
-        
+            unlink($filepath);
             $codes = array_map("str_getcsv", explode("\n", $csv));
 
            for ($i=1; $i < count($codes); $i++) { 

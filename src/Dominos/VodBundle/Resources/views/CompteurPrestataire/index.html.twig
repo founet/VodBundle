@@ -1,48 +1,45 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    <h3>Ventiller les dates pour le prestataire {{prestataire.nompresta}} du {{prestataire.startpresta|date('Y-m-d H:i:s')}} au {{prestataire.endpresta|date('Y-m-d H:i:s')}}</h3><br>
-    <p>Nombre de codes non grillés : {{prestataire.getNbreCodeNotUsed}}</p><br>
-    <br>
-{{compteur.getNbreCodesDispo}}
-    <h3> Dates Ventillées</h3>
-    <table class="records_list" border="1">
-        <thead>
-            <tr>
-                <th>Datepresta</th>
-                <th>Nbrecodeday</th>
-                <th>Nbrecodeused</th>
-                <th>Nbre Codes dispo</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for entity in entities %}
-            <tr>
-                <td>{{ entity.datepresta |date('Y-m-d H:i:s') }}</td>
-                <td>{{ entity.nbrecodeday }}</td>
-                <td>{{ entity.nbrecodeused }}</td>
-                <td>{{ entity.getNbreCodesDispo }}</td>
-                <td>
-                <ul>
-                    <li>
-                        <a href="{{ path('compteur_show_by_presta', { 'idpresta': entity.prestataire.id,'id': entity.id }) }}">show</a>
-                    </li>
-                    <li>
-                        <a href="{{ path('compteur_edit_by_presta', { 'idpresta': entity.prestataire.id,'id': entity.id }) }}">edit</a>
-                    </li>
-                </ul>
-                </td>
-            </tr>
+    <div class="white_title long">
+        <h4 class="center">Ventiller les dates pour le prestataire {{prestataire.nompresta}} du {{prestataire.startpresta|date('d/m/Y')}} au {{prestataire.endpresta|date('d/m/Y')}}</h4>
+    </div>
+    <div class="white_title short">
+        <h4 class="center">Nombre de codes disponibles : {{prestataire.getNbreCodesDispo}}</h4>
+    </div>
+    {% for flashMessage in app.session.flashbag.get('error') %}
+        <div class="alert alert-danger" >
+            {{ flashMessage }}
+        </div>
+    {% endfor %}
+    <br>  
+        {% for formEdit in formsEdit %}
+         
+         <div class="white inlineform ">
+             <div class="class="col-md-10">
+                {{form_start(formEdit[0],{'attr':{'class':'form-horizontal modifform'}})}}
+                    <span class="space"><label >Date : </label> {{form_widget(formEdit[0].datepresta)}}</span>
+                    <span class="space"><label >Nombre de code : </label> {{form_widget(formEdit[0].nbrecodeday)}}</span>
+                    <span>{{form_widget(formEdit[0].submit)}}</span>
+              
+                {{form_end(formEdit[0])}}
+              </div>
+             <div class="class="col-md-2">{{form(formEdit[1])}} </div>
+        </div>  
+               
         {% endfor %}
-        </tbody>
-    </table>
-
-        <ul>
-        <li>
-            <a href="{{ path('compteur_new_by_presta',{'id': prestataire.id }) }}">
-                Ajouter une nouvelle date
-            </a>
-        </li>
-    </ul>
+      <br>
+    <div class="white_title">
+        <h4 class="center">Ajouter une nouvelle date </h4>
+     </div>
+    <div class="white inlineform">
+        {{form_start(formAdd,{'attr':{'class':'form-horizontal'}})}}
+            <span class="space"><label >Date : </label> {{form_widget(formAdd.datepresta)}}</span>
+            <span class="space"><label >Nombre de code : </label> {{form_widget(formAdd.nbrecodeday)}}</span>
+            <span>{{form_widget(formAdd.submit)}}</span>
+        {{form_end(formAdd)}}  
+    </div> 
+    <div class="white formbloc center">
+     <a href="{{ path('prestataire') }}" class="btn btn-info">  Accueil </a>     
+    </div>
     {% endblock %}
