@@ -29,17 +29,17 @@ class CompteurPrestataireController extends Controller
         $prestataire = $em->getRepository('DominosVodBundle:Prestataire')->find($id);
         $compteur->setPrestataire($prestataire);
         $formAdd = $this->createCreateForm($compteur);
-        $formsEdit = array();
+       /* $formsEdit = array();
         foreach ($entities as $entity) {
             $formEdit = $this->createEditForm($entity)->createView();
             $deleteForm = $this->createDeleteForm($entity->getId())->createView();
-            $formsEdit[] = array($formEdit,$deleteForm);
-        }
-       
+            $formsEdit[] = array($formEdit,$deleteForm,$entity);
+        }*/
+
         return $this->render('DominosVodBundle:CompteurPrestataire:index.html.twig', array(
             'prestataire' => $prestataire,
             'formAdd'=>$formAdd->createView(),
-            'formsEdit'=>$formsEdit,
+            'entities'=>$entities,
         ));
     }
     /**
@@ -54,6 +54,9 @@ class CompteurPrestataireController extends Controller
         $compteur->setPrestataire($prestataire);
         $form = $this->createCreateForm($compteur);
         $form->handleRequest($request);
+        $datepresta = $form->get('datepresta')->getData()." 23:59:59";
+      
+       $compteur->setDatepresta($datepresta);
        
         // Vérifie nbre codes à ventiller est différent de zéro
         if($compteur->getNbrecodeday() == 0){
@@ -147,6 +150,24 @@ class CompteurPrestataireController extends Controller
         return $form;
     }
     /**
+    * Creates a form edit render Action 
+    *
+    * @param Compteur $compteur The compteur
+    *
+    * @return \Symfony\Component\Form\Form The form
+    */
+    public function editFormAction(Compteur $compteur)
+    {
+
+       $editForm = $this->createEditForm($compteur);
+
+         return $this->render('DominosVodBundle:CompteurPrestataire:editform.html.twig', array(
+            'formEdit'=>$editForm->createView(),
+        ));
+    }
+
+
+    /**
      * Edits an existing Compteur compteur.
      *
      */
@@ -155,7 +176,13 @@ class CompteurPrestataireController extends Controller
 
         $em = $this->getDoctrine()->getManager();
         $compteur = $em->getRepository('DominosVodBundle:Compteur')->find($id);
-       
+        $deleteForm = $this->createDeleteForm($id);
+        $editForm = $this->createEditForm($compteur);
+        $editForm->handleRequest($request);
+        $datepresta = $editForm->get('datepresta')->getData()." 23:59:59";
+        $compteur->setDatepresta($datepresta);
+
+
         // Vérifie nbre codes à ventiller est différent de zéro
         if($compteur->getNbrecodeday() == 0){
             $this->get('session')
@@ -189,9 +216,6 @@ class CompteurPrestataireController extends Controller
             throw $this->createNotFoundException('Unable to find Compteur compteur.');
         }
 
-        $deleteForm = $this->createDeleteForm($id);
-        $editForm = $this->createEditForm($compteur);
-        $editForm->handleRequest($request);
 
         if ($editForm->isValid()) {
             $em->flush();
@@ -268,8 +292,9 @@ class CompteurPrestataireController extends Controller
     private function checkNbreCodesRestants(Compteur $compteur){
 
         $nbrecodesrestants = $compteur->getPrestataire()->getNbreCodesDispo();
+
         if(!is_null($compteur->getId())){
-             $nbrecodesrestants = $nbrecodesrestants + $compteur->getNbreCodeRestants();
+             $nbrecodesrestants = $nbrecodesrestants + $compteur->getNbreCodeday();
         }
         if($compteur->getNbreCodeRestants() > $nbrecodesrestants  ){
             return false;
@@ -285,13 +310,17 @@ class CompteurPrestataireController extends Controller
     private function checkPrestataireByDay(Compteur $compteur){
         $em = $this->getDoctrine()->getManager();
         $nbrepresta = $em->getRepository('DominosVodBundle:Compteur')->NbrePrestaByDay($compteur);
-        if($compteur->getId() == null){
-            $flag = ($nbrepresta == 0) ? true : false;
-        }else {
-          $flag = ($nbrepresta == 1) ? true : false;
+       if($nbrepresta == 0) {
+        return true;
+       }
+        if($nbrepresta == 1) {
+            if($compteur->getId()!= null){
+                return true;
+            }else {
+                return false;
+            }
         }
-        
-        return $flag;
+    
     }
 
 

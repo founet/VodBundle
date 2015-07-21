@@ -3,13 +3,18 @@
 {% block body -%}
 <div class="formbloc">
    <div class="white_title">
-    <h4 class="center">Modifier un prestataire</h4>
+    <h4 class="center">Gestion d'un prestataire</h4>
   </div>
         {% for flashMessage in app.session.flashbag.get('error') %}
                 <div class="alert-box success radius">
                     {{ flashMessage }}
                 </div>
         {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('success') %}
+        <div class="alert alert-success" >
+            {{ flashMessage }}
+        </div>
+    {% endfor %}
     <div class="white">
         {{ form_start(formpresta,{'attr':{'class':'form-horizontal'}}) }}
          <div class="form-group">
@@ -41,7 +46,7 @@
 
 <div class="formbloc">
 <div class="white_title">
-    <h4 class="center">Ajouter des menus</h4>
+    <h4 class="center">Gestion des menus</h4>
  </div>
  <div class="white">
     {{form_start(formmenu,{'attr':{'class':'form-horizontal'}})}}
@@ -58,7 +63,7 @@
 </div>
 <div class="formbloc">
     <div class="white_title">
-        <h4 class="center">Ajouter des codes</h4>
+        <h4 class="center">Gestion des codes</h4>
      </div>
    <div class="white">
     {{form_start(formcode,{'attr':{'class':'form-horizontal'}})}}
@@ -71,10 +76,11 @@
             </div>
         </div>
     {{ form_end(formcode) }}
+    <a href="{{ path('compteur_index_by_presta', { 'id': prestataire.id }) }}" class="btn btn-info">Ventiller les codes</a>
     </div>
 </div>
 <div class="white center">
- <a href="{{ path('compteur_index_by_presta', { 'id': prestataire.id }) }}" class="btn btn-info">Ventiller les codes</a>
+ 
  
  <a href="{{ path('prestataire') }}" class="btn btn-info">  Accueil </a>
     

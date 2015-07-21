@@ -49,7 +49,9 @@ class PrestataireController extends Controller
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($prestataire);
                 $em->flush();
-
+                 $this->get('session')
+                    ->getFlashBag()
+                    ->add('success', 'Le prestataire a été ajouté avec succès');
                 return $this->redirect($this->generateUrl('prestataire_new', array('id' => $prestataire->getId())));
            }else {
               $this->get('session')
@@ -57,9 +59,7 @@ class PrestataireController extends Controller
                     ->add('error', 'Inscription impossible : déjà deux prestataires sur cette période');
                     return $this->redirect($this->generateUrl('prestataire_new'));
            }
-        } else {
-            die("error");
-        }
+        } 
 
         return $this->render('DominosVodBundle:Prestataire:new.html.twig', array(
             'prestataire' => $prestataire,
@@ -197,7 +197,9 @@ class PrestataireController extends Controller
                     ->add('error', 'Inscription impossible : déjà deux prestataires sur cette période');
                       return $this->redirect($this->generateUrl('prestataire_edit', array('id' => $id)));
            }
-           
+            $this->get('session')
+                    ->getFlashBag()
+                    ->add('success', 'Le prestataire a été modifié avec succès');
             return $this->redirect($this->generateUrl('prestataire_edit', array('id' => $id)));
         }
 
@@ -230,6 +232,9 @@ class PrestataireController extends Controller
             $em->flush();
         }
 
+    $this->get('session')
+        ->getFlashBag()
+        ->add('success', 'Le prestataire a été supprimé avec succès');
         return $this->redirect($this->generateUrl('prestataire'));
     }
 
@@ -346,20 +351,24 @@ class PrestataireController extends Controller
             unlink($filepath);
             $presta_menus = array_map("str_getcsv", explode("\n", $csv));
 
-           for ($i=1; $i < count($presta_menus); $i++) { 
-              if(!empty($presta_menus[$i][0])){
+            for ($i=1; $i < count($presta_menus); $i++) { 
+                $prestaMenu = explode(";",$presta_menus[$i][0]);
+                if(!empty($prestaMenu[0])){
                    $entity = new Menus();
-                   $entity->setMagnum($presta_menus[$i][0]);
+                   $entity->setMagnum($prestaMenu[0]);
                    $entity->setPrestataire($prestataire);
-                   $entity->setMenu1($presta_menus[$i][1]);
-                   $entity->setMenu2($presta_menus[$i][2]);
-                   $entity->setMenu3($presta_menus[$i][3]);
-                   $entity->setMenu4($presta_menus[$i][4]);
+                   $entity->setMenu1($prestaMenu[1]);
+                   $entity->setMenu2($prestaMenu[2]);
+                   $entity->setMenu3($prestaMenu[3]);
+                   $entity->setMenu4($prestaMenu[4]);
                    $em->persist($entity);
+               }
              }
-           }
+            
            $em->flush();
-
+            $this->get('session')
+                    ->getFlashBag()
+                    ->add('success', 'Les menus ont été ajoutés avec succès');
             return $this->redirect($this->generateUrl('prestataire_new', array('id' => $prestataire->getId())));
         }
 
@@ -396,19 +405,23 @@ class PrestataireController extends Controller
             $csv= file_get_contents($filepath);
             unlink($filepath);
             $codes = array_map("str_getcsv", explode("\n", $csv));
-
-           for ($i=1; $i < count($codes); $i++) { 
-              if(!empty($codes[$i][0])){
+           
+           for ($i = 1; $i < count($codes); $i++) { 
+             $code = explode(";",$codes[$i][0]);
+              if(!empty($code[0])){
                     $entity = new Code();
-                    $entity->setCode($codes[$i][0]);
+                    $entity->setCode($code[0]);
                     $entity->setPrestataire($prestataire);
                     $entity->setDateused(null);
 
                     $em->persist($entity);
              }
            }
-           $em->flush();
 
+           $em->flush();
+             $this->get('session')
+                    ->getFlashBag()
+                    ->add('success', 'Les codes ont été ajoutés avec succès');
              return $this->redirect($this->generateUrl('prestataire_new', array('id' => $prestataire->getId())));
         }
 

@@ -20,7 +20,8 @@ class MenusRepository extends EntityRepository {
 	     	->andWhere('m.magnum = :magnum')
 	       	->setParameter('magnum', $idmag)
 	       	->andWhere('c.datepresta = :datepresta')
-	       	->setParameter('datepresta', date('Y-m-d'));
+	       	->setParameter('datepresta', date('d-m-Y').' 23:59:59')
+	       	->andWhere('(c.nbrecodeday - c.nbrecodeused) > 0');
 	
 		return $qb->getQuery()->getOneOrNullResult();
 

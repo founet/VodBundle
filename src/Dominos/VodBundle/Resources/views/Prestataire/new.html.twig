@@ -2,15 +2,16 @@
 
 {% block body -%}
 <div class="white_title">
-    <h4 class="center">Ajouter un prestataire</h4>
+    <h4 class="center">Gestion d'un prestataire</h4>
 </div>
-    	{% for flashMessage in app.session.flashbag.get('error') %}
-    		    <div class="alert alert-danger" >
-    		         {{ form_errors(formpresta) }}
-    		    </div>
-		{% endfor %}
 
-        {% for flashMessage in app.session.flashbag.get('form_errors') %}
+        {{ form_errors(formpresta) }}
+        {% for flashMessage in app.session.flashbag.get('success') %}
+            <div class="alert alert-success" >
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('error') %}
         <div class="alert alert-danger" >
             {{ flashMessage }}
         </div>
@@ -47,7 +48,7 @@
 {% if prestataire.id != 0 %}
    <div class="formbloc">
 <div class="white_title">
-    <h4 class="center">Ajouter des menus</h4>
+    <h4 class="center">Gestiondes menus</h4>
  </div>
  <div class="white">
     {{form_start(formmenu,{'attr':{'class':'form-horizontal'}})}}
@@ -64,7 +65,7 @@
 </div>
 <div class="formbloc">
     <div class="white_title">
-        <h4 class="center">Ajouter des codes</h4>
+        <h4 class="center">Gestion des codes</h4>
      </div>
    <div class="white">
     {{form_start(formcode,{'attr':{'class':'form-horizontal'}})}}

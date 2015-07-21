@@ -37,7 +37,7 @@ class ApiController extends Controller
 	  }else {
 	  	$response['code'] = 200;
 	  	$response['message'] = "ok";
-	  	$response['payload']['idmag'] = $menus->getId();
+	  	$response['payload']['idmag'] = $idmag;
 	  	$response['payload']['prestataire'] = $idpresta;
 	  	$response['payload']['menus']['menu1'] = $menus->getMenu1();
 	  	$response['payload']['menus']['menu2'] = $menus->getMenu2();
@@ -92,7 +92,7 @@ class ApiController extends Controller
 
 		//$payload = json_decode($payload);
 		//$code = $payload->code;
-		$codeid =$payload;
+		$codeid = $payload;
 		$code = $em->getRepository('DominosVodBundle:Code')->findOneByCode($codeid);
 	
 		$code->setDateused(new \DateTime());

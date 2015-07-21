@@ -13,18 +13,12 @@
         </div>
     {% endfor %}
     <br>  
-        {% for formEdit in formsEdit %}
+        {% for entity in entities %}
          
          <div class="white inlineform ">
-             <div class="class="col-md-10">
-                {{form_start(formEdit[0],{'attr':{'class':'form-horizontal modifform'}})}}
-                    <span class="space"><label >Date : </label> {{form_widget(formEdit[0].datepresta)}}</span>
-                    <span class="space"><label >Nombre de code : </label> {{form_widget(formEdit[0].nbrecodeday)}}</span>
-                    <span>{{form_widget(formEdit[0].submit)}}</span>
-              
-                {{form_end(formEdit[0])}}
-              </div>
-             <div class="class="col-md-2">{{form(formEdit[1])}} </div>
+     
+            <b>{{entity.datepresta}}</b><br>{{ render(controller('DominosVodBundle:CompteurPrestataire:editForm', { 'compteur': entity })) }}
+             
         </div>  
                
         {% endfor %}

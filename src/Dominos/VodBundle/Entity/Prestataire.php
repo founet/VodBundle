@@ -329,7 +329,7 @@ class Prestataire
     public function getNbreCompteurTotal(){
         $i = 0;
         foreach ($this->compteurs as $compteur) {
-           $i = $i+$compteur->getNbreCodeRestants();
+           $i = $i + $compteur->getNbreCodeRestants();
         }
         return $i;
     }
@@ -340,10 +340,10 @@ class Prestataire
     */
     public function getNbreCodesNonVentilles(){
 
-        $nbreCodeTotal = $this->getNbreCodeTotal();
-       
+        //$nbreCodeTotal = $this->getNbreCodeTotal();
+        $nbreCodeTotalNotUsed = $this->getNbreCodeNotUsed();
         $nbreCodesVentilles = $this->getNbreCompteurTotal();
-        $NbreCodesNonVentilles = $nbreCodeTotal - $nbreCodesVentilles;
+        $NbreCodesNonVentilles = $nbreCodeTotalNotUsed - $nbreCodesVentilles;
         
         return $NbreCodesNonVentilles; 
     }
@@ -353,8 +353,8 @@ class Prestataire
         $nbre = 0;
         $now = new \DateTime();
         foreach ($compteurs as $compteur) {
-           
-           if(( $compteur->getDatepresta()->format('Y-m-d') < $now->format('Y-m-d'))) {
+            $dateCompteur = new \DateTime($compteur->getDatepresta());
+           if(( $dateCompteur < $now)) {
                 $nbre = $nbre + $compteur->getNbreCodeRestants();
            }
         }
