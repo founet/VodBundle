@@ -43,7 +43,9 @@ class PrestataireController extends Controller
         $prestataire = new Prestataire();
         $formpresta = $this->createPrestaForm($prestataire);
         $formpresta->handleRequest($request);
-
+        $dateEndPresta = $formpresta->get('endpresta')->getData();
+        $dateEndPresta->add(new \DateInterval('PT23H59M59S'));
+        $prestataire->setEndpresta($dateEndPresta);
         if ($formpresta->isValid()) {
            if($this->checkPrestaPeriod($prestataire)){
                 $em = $this->getDoctrine()->getManager();
@@ -186,7 +188,9 @@ class PrestataireController extends Controller
         $formmenu = $this->createMenuCreateForm($prestataire);
         $formcode = $this->createCodeCreateForm($prestataire);
         $editForm->handleRequest($request);
-        
+        $dateEndPresta = $editForm->get('endpresta')->getData();
+        $dateEndPresta->add(new \DateInterval('PT23H59M59S'));
+        $prestataire->setEndpresta($dateEndPresta);
         if ($editForm->isValid()) {
             if($this->checkPrestaPeriod($prestataire)){
 
@@ -335,7 +339,9 @@ class PrestataireController extends Controller
         if ($form->isValid()) {
             $file = $form->get('menufile')->getData();
             $replace = $form->has('replace');
+             $message = "Les menus ont été ajoutés avec succès";
             if ($replace){
+                $message = "Les menus ont été remplacés avec succès";
                 $menus_presta = $prestataire->getMenusPresta();
                 foreach ($menus_presta as $menu_presta) {
                     $em->remove($menu_presta);
@@ -368,7 +374,7 @@ class PrestataireController extends Controller
            $em->flush();
             $this->get('session')
                     ->getFlashBag()
-                    ->add('success', 'Les menus ont été ajoutés avec succès');
+                    ->add('success', $message);
             return $this->redirect($this->generateUrl('prestataire_new', array('id' => $prestataire->getId())));
         }
 

@@ -48,7 +48,7 @@
 {% if prestataire.id != 0 %}
    <div class="formbloc">
 <div class="white_title">
-    <h4 class="center">Gestiondes menus</h4>
+    <h4 class="center">Gestion des menus</h4>
  </div>
  <div class="white">
     {{form_start(formmenu,{'attr':{'class':'form-horizontal'}})}}
@@ -78,6 +78,7 @@
             </div>
         </div>
     {{ form_end(formcode) }}
+     <a href="{{ path('compteur_index_by_presta', { 'id': prestataire.id }) }}" class="btn btn-info">Ventiller les codes</a>
     </div>
 </div>
 

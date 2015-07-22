@@ -1,5 +1,5 @@
 menus_of_day:
-    path:     /prestataire/{idpresta}/magasin/{idmag}
+    path:     /menus/magasin/{idmag}
     defaults: { _controller: "DominosApiBundle:Api:menus" }
 
 get_code_to_burn:

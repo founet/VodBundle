@@ -253,17 +253,10 @@ class Prestataire
         $daterange = new \DatePeriod($date, $interval ,$end_date);
         $dates = array();
         foreach($daterange as $date){
-            //$now = new \DateTime();
-            //$now = $now->format('Y-m-d');
-            //$date = $date->format('Y-m-d');
-            //if($date >= $now) {
-               // $date = new \DateTime($date);
-                $date = $date->format('d-m-Y');
-                $dates[$date] = $date;
-           //}
-            
+            $date = $date->format('d-m-Y');
+            $dateKey = $date.' 23:59:59';
+            $dates[$dateKey] = $date;            
         }
-        //$dates[$end_date] = $end_date;
         return $dates;
     }
 
@@ -344,7 +337,7 @@ class Prestataire
         $nbreCodeTotalNotUsed = $this->getNbreCodeNotUsed();
         $nbreCodesVentilles = $this->getNbreCompteurTotal();
         $NbreCodesNonVentilles = $nbreCodeTotalNotUsed - $nbreCodesVentilles;
-        
+       
         return $NbreCodesNonVentilles; 
     }
 

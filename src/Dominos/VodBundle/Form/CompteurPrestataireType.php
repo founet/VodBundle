@@ -14,8 +14,8 @@ class CompteurPrestataireType extends AbstractType
 {
     private $dates ;
 
-    public function __construct($dates){
-        $this->dates = $dates;
+    public function __construct(){
+      
     }
     /**
      * @param FormBuilderInterface $builder
@@ -23,7 +23,12 @@ class CompteurPrestataireType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-            $dates = $this->dates;
+            $compteur = $builder->getData();
+            
+            $dates = $compteur->getPrestataire()->getPrestaPeriod();
+            if(is_null($compteur->getId())){
+                
+            }
             $builder->add('datepresta','choice', array('choices' => $dates));
             $builder->add('nbrecodeday','number', array(
                                 'constraints' => array(

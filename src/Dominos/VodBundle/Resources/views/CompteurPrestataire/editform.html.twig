@@ -1,14 +1,25 @@
- <div class="class="col-md-10">
+ <div class="row">
+
     {{form_start(formEdit,{'attr':{'class':'form-horizontal modifform'}})}}
-        <span class="space">
+        <div class="col-sm-4">
             <label >Date : </label> 
             {{form_widget(formEdit.datepresta)}}
-        </span>
-        <span class="space">
-            <label >Nombre de code : </label> 
-            {{form_widget(formEdit.nbrecodeday)}}
-        </span>
-        <span>{{form_widget(formEdit.submit)}}</span>
+        </div>
+        <div class="col-sm-6">
+          <div class="row">
+                <div class="col-sm-12">
+                    <label >Nombre de codes : </label> 
+                   {{form_widget(formEdit.nbrecodeday,{'attr':{'class':'nbrecodeday'}})}}
+                </div>
+                <div class="col-sm-12">
+                    <label >Nombre de codes utilisés : </label> 
+                    {{compteur.nbrecodeused}}
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-2">{{form_widget(formEdit.submit)}}</div>
   
     {{form_end(formEdit)}}
 </div>
+
+

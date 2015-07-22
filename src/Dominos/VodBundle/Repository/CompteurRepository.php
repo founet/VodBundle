@@ -13,9 +13,7 @@ class CompteurRepository extends EntityRepository {
 			->select('count(c)')
 			->from($this->_entityName,'c')
 			->where('c.datepresta = :datepresta')
-			->andWhere('c.prestataire = :prestataire')
-	       	->setParameter('datepresta', $compteur->getDatepresta())
-	       	->setParameter('prestataire', $compteur->getPrestataire());
+	       	->setParameter('datepresta', $compteur->getDatepresta());
 
 		$result = $qb->getQuery()->getSingleScalarResult();
 		return $result;

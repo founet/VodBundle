@@ -24,10 +24,10 @@ use Dominos\VodBundle\Repository\CompteurRepository;
 class ApiController extends Controller
 {
 
-	public function menusAction($idpresta,$idmag){
+	public function menusAction($idmag){
 
 	  $em = $this->getDoctrine()->getManager();
-	  $menus = $em->getRepository('DominosVodBundle:Menus')->getMenusMagByPresta($idpresta,$idmag);
+	  $menus = $em->getRepository('DominosVodBundle:Menus')->getMenusMagByPresta($idmag);
 
 	  $response = [];
 	  if(is_null($menus) ){
@@ -38,7 +38,7 @@ class ApiController extends Controller
 	  	$response['code'] = 200;
 	  	$response['message'] = "ok";
 	  	$response['payload']['idmag'] = $idmag;
-	  	$response['payload']['prestataire'] = $idpresta;
+	  	$response['payload']['prestataire'] = $menus->getPrestataire()->getId();
 	  	$response['payload']['menus']['menu1'] = $menus->getMenu1();
 	  	$response['payload']['menus']['menu2'] = $menus->getMenu2();
 	  	$response['payload']['menus']['menu3'] = $menus->getMenu3();
@@ -94,16 +94,25 @@ class ApiController extends Controller
 		//$code = $payload->code;
 		$codeid = $payload;
 		$code = $em->getRepository('DominosVodBundle:Code')->findOneByCode($codeid);
-	
-		$code->setDateused(new \DateTime());
+		$today = date('d-m-Y').' 23:59:59';
+		$compteur = $em->getRepository('DominosVodBundle:Compteur')->findOneByDatepresta($today);
+		$nbrecodeused = $compteur->getNbrecodeused() + 1;
+		$compteur->setNbrecodeused($nbrecodeused);
 
 		$response = [];
 
 		try {
-			$em->flush();
 
+			if(is_null($code->getDateused())){
+				$code->setDateused(new \DateTime());
+				$em->flush();
+				$message = "ok";
+			} else {
+				$message = "already burn";
+			}
+			
 			$response['code'] = 200;
-			$response['message'] = "ok";
+			$response['message'] = $message;
 			$response['payload']['code'] = $code->getCode();
 			$response['payload']['action'] = "burned";
 			
