@@ -5,8 +5,6 @@ namespace Dominos\VodBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\File;
-use Dominos\VodBundle\Repository\PrestataireRepository;
 
 class MenusType extends AbstractType
 {
@@ -16,17 +14,7 @@ class MenusType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('menufile', 'file', array(
-                               'constraints' => array(
-                                  new File(array(
-                                    'maxSize'       => '10M',
-                                    //'mimeTypes'   => array("text/csv,application/octet-stream"),
-                                    'maxSizeMessage'       => 'Fichier trop grand',
-                                    //'mimeTypesMessage'   => 'Extension autorisée : csv',
-                                ))
-                               )
-                           )
-                );
+        $builder->add('menufile', 'file');
     
     }
     

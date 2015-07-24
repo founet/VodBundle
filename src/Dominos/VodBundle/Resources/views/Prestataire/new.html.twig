@@ -52,15 +52,18 @@
  </div>
  <div class="white">
     {{form_start(formmenu,{'attr':{'class':'form-horizontal'}})}}
-            <div class="form-group">
+            <div class="form-group row">
              <div class="col-lg-2">
                 {{ form_label(formmenu.menufile,'Fichier CSV') }}
              </div>
-            <div class="col-lg-10">
+            <div class="col-lg-4">
                 {{ form_widget(formmenu.menufile) }}
             </div>
+             <div class="col-lg-2">
+              {{ form_end(formmenu) }}
+            </div>
         </div>
-    {{ form_end(formmenu) }}
+   
     </div>
 </div>
 <div class="formbloc">
@@ -69,16 +72,26 @@
      </div>
    <div class="white">
     {{form_start(formcode,{'attr':{'class':'form-horizontal'}})}}
-            <div class="form-group">
+            <div class="form-group row">
              <div class="col-lg-2">
                 {{ form_label(formcode.codefile,'Fichier CSV') }}
              </div>
-            <div class="col-lg-10">
+            <div class="col-lg-4">
                 {{ form_widget(formcode.codefile) }}
             </div>
+             <div class="col-lg-2">
+                {{ form_widget(formcode.submit) }}
+            </div>
+            <div class="col-lg-2">
+                {{ form_widget(formcode.remplacer) }}
+            </div>
+             {{ form_end(formcode) }}
+                 <a href="{{ path('compteur_index_by_presta', { 'id': prestataire.id }) }}" class="btn btn-info">Ventiller les codes</a>
+           
+
         </div>
-    {{ form_end(formcode) }}
-     <a href="{{ path('compteur_index_by_presta', { 'id': prestataire.id }) }}" class="btn btn-info">Ventiller les codes</a>
+   
+  
     </div>
 </div>
 

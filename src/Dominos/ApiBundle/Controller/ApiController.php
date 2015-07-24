@@ -23,11 +23,17 @@ use Dominos\VodBundle\Repository\CompteurRepository;
  */
 class ApiController extends Controller
 {
+	// Nombre de coupons pour la temposrisation
+	const NBRE_COUPONS_TEMPORISATION = 0;
+
+	// Nombre limite de coupons pour envoi alert email
+	const NBRE_LIMIT_COUPONS = 1;
+
 
 	public function menusAction($idmag){
 
 	  $em = $this->getDoctrine()->getManager();
-	  $menus = $em->getRepository('DominosVodBundle:Menus')->getMenusMagByPresta($idmag);
+	  $menus = $em->getRepository('DominosVodBundle:Menus')->getMenusMagByPresta($idmag,self::NBRE_COUPONS_TEMPORISATION);
 
 	  $response = [];
 	  if(is_null($menus) ){
@@ -60,12 +66,14 @@ class ApiController extends Controller
 
 		$em = $this->getDoctrine()->getManager();
 		$code = $em->getRepository('DominosVodBundle:Code')->getOneCodeByPresta($idpresta);
-
+		
 		$response = [];
 	  if(is_null($code) ){
 	  	$response['code'] = 204;
 	  	$response['message'] = "notok";
 	  }else {
+	  	$code->setDatetemp(new \DateTime());
+	  	$em->flush();
 	  	$response['code'] = 200;
 	  	$response['message'] = "ok";
 	  	$response['payload']['code'] = $code->getCode();
@@ -104,15 +112,31 @@ class ApiController extends Controller
 		try {
 
 			if(is_null($code->getDateused())){
+
 				$code->setDateused(new \DateTime());
 				$em->flush();
-				$message = "ok";
+
+				if($compteur->getNbreCodeRestants() == self::NBRE_LIMIT_COUPONS){
+					$sujet = "Test";
+					$From = "aobmilan@gmail.com";
+					$recipients = array('bah.founet@gmail.com','amadou@madmedia.fr');
+					$content = "Message alert";
+					$message = \Swift_Message::newInstance()
+						        ->setSubject($sujet)
+						        ->setFrom($From)
+						        ->setTo($recipients)
+						        ->setBody($content);
+				    $this->get('mailer')->send($message);
+
+				}
+
+				$apimessage = "ok";
 			} else {
-				$message = "already burn";
+				$apimessage = "already burn";
 			}
 			
 			$response['code'] = 200;
-			$response['message'] = $message;
+			$response['message'] = $apimessage;
 			$response['payload']['code'] = $code->getCode();
 			$response['payload']['action'] = "burned";
 			

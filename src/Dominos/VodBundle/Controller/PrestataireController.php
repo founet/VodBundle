@@ -301,7 +301,7 @@ class PrestataireController extends Controller
             $formmenu->add('replace','hidden',array('data'=>'replace'));
         }
 
-        $formmenu->add('submit', 'submit', array('label' => $label,'attr'=>array('class'=>'btn btn-info')));
+        $formmenu->add('submit', 'submit', array('label' => $label,'attr'=>array('class'=>'btn btn-info nomargin')));
 
         return $formmenu;
     }
@@ -320,7 +320,8 @@ class PrestataireController extends Controller
             'method' => 'POST',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Ajouter','attr'=>array('class'=>'btn btn-info')));
+        $form->add('submit', 'submit', array('label' => 'Ajouter','attr'=>array('class'=>'btn btn-info nomargin')));
+        $form->add('remplacer', 'submit', array('label' => 'Remplacer','attr'=>array('class'=>'btn btn-info nomargin')));
 
         return $form;
     }
@@ -348,15 +349,29 @@ class PrestataireController extends Controller
                 }
                 $em->flush();
             }
-            
+            $mimetype = $file->getMimeType();
             $nameFile = sha1(uniqid(mt_rand(), true)).'.'.$file->guessExtension();
             $docPath = self::PATH_DIR_ROOT_TEMP;
+            if($this->checkExtension($mimetype) == false) {
+                $this->get('session')
+                    ->getFlashBag()
+                    ->add('error', 'Le fichier doit être un csv');
+                    return $this->redirect($this->generateUrl('prestataire_new', array('id' => $prestataire->getId())));
+            }
             $file->move($docPath, $nameFile);
             $filepath = $docPath.$nameFile;
             $csv= file_get_contents($filepath);
             unlink($filepath);
             $presta_menus = array_map("str_getcsv", explode("\n", $csv));
-
+            $filehead = explode(";", $presta_menus[0][0]);
+            $haystack = array(['Magasin','Menu1','Menu2','Menu3','Menu4']);
+            if((count($filehead) != 5) && (!in_array($filehead,$haystack))) {
+                $this->get('session')
+                    ->getFlashBag()
+                    ->add('error', 'Le fichier ne semble pas correspondre au format attendu');
+                    return $this->redirect($this->generateUrl('prestataire_new', array('id' => $prestataire->getId())));
+            }
+            
             for ($i=1; $i < count($presta_menus); $i++) { 
                 $prestaMenu = explode(";",$presta_menus[$i][0]);
                 if(!empty($prestaMenu[0])){
@@ -395,23 +410,39 @@ class PrestataireController extends Controller
         if ($form->isValid()) {
 
             $file = $form->get('codefile')->getData();
-
-            if ($request->request->has('replace')){
+            $flashmessage = 'Les codes ont été ajoutés avec succès';
+            if ($form->get('remplacer')->isClicked()){
                 $codes = $prestataire->getCodes();
                 foreach ($codes as $code) {
                     $em->remove($code);
                 }
                 $em->flush();
+                $flashmessage = 'Les codes ont été remplacés avec succès';
             }
             
+            $mimetype = $file->getMimeType();
+         
             $nameFile = sha1(uniqid(mt_rand(), true)).'.'.$file->guessExtension();
             $docPath = self::PATH_DIR_ROOT_TEMP;
+            if($this->checkExtension($mimetype) == false) {
+                $this->get('session')
+                    ->getFlashBag()
+                    ->add('error', 'Le fichier doit être au csv');
+                    return $this->redirect($this->generateUrl('prestataire_new', array('id' => $prestataire->getId())));
+            }
             $file->move($docPath, $nameFile);
             $filepath = $docPath.$nameFile;
             $csv= file_get_contents($filepath);
             unlink($filepath);
             $codes = array_map("str_getcsv", explode("\n", $csv));
-           
+            $filehead = explode(";", $codes[0][0]);
+            $haystack = array(['Code']);
+            if((count($filehead) != 1) && (!in_array($filehead,$haystack))) {
+                $this->get('session')
+                    ->getFlashBag()
+                    ->add('error', 'Le fichier ne semble pas correspondre au format attendu');
+                    return $this->redirect($this->generateUrl('prestataire_new', array('id' => $prestataire->getId())));
+            }
            for ($i = 1; $i < count($codes); $i++) { 
              $code = explode(";",$codes[$i][0]);
               if(!empty($code[0])){
@@ -427,10 +458,24 @@ class PrestataireController extends Controller
            $em->flush();
              $this->get('session')
                     ->getFlashBag()
-                    ->add('success', 'Les codes ont été ajoutés avec succès');
+                    ->add('success', $flashmessage);
              return $this->redirect($this->generateUrl('prestataire_new', array('id' => $prestataire->getId())));
         }
 
         
+    }
+
+    /**
+    * Check csv extension 
+    */
+    private function checkExtension($mimetype){
+        $csv_mimetypes = array('text/csv','text/plain','application/csv','text/comma-separated-values',
+                            'application/excel','application/vnd.ms-excel','application/vnd.msexcel',
+                            'text/anytext','application/octet-stream','application/txt',);
+        if(!in_array($mimetype, $csv_mimetypes)){
+            return false;
+        }else {
+            return true;
+        }
     }
 }

@@ -252,10 +252,14 @@ class Prestataire
         $interval = new \DateInterval('P1D');
         $daterange = new \DatePeriod($date, $interval ,$end_date);
         $dates = array();
+        $today = new \DateTime();
         foreach($daterange as $date){
-            $date = $date->format('d-m-Y');
-            $dateKey = $date.' 23:59:59';
-            $dates[$dateKey] = $date;            
+            $date->add(new \DateInterval('PT23H59M59S'));
+            if($date > $today) {
+                $date = $date->format('d-m-Y');
+                $dateKey = $date.' 23:59:59';
+                $dates[$dateKey] = $date; 
+            }           
         }
         return $dates;
     }

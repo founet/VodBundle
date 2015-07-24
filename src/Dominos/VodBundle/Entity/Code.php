@@ -41,6 +41,13 @@ class Code
      */
     private $dateused;
 
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="datetemp", type="datetime", nullable= true)
+     */
+    private $datetemp;
+
 
     /**
      * Get id
@@ -97,6 +104,30 @@ class Code
     public function getDateused()
     {
         return $this->dateused;
+    }
+
+
+    /**
+     * Set datetemp
+     *
+     * @param \DateTime $datetemp
+     * @return Code
+     */
+    public function setDatetemp($datetemp)
+    {
+        $this->datetemp = $datetemp;
+
+        return $this;
+    }
+
+    /**
+     * Get datetemp
+     *
+     * @return \DateTime 
+     */
+    public function getDatetemp()
+    {
+        return $this->datetemp;
     }
 
     /**

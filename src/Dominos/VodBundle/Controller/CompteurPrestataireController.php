@@ -24,6 +24,8 @@ class CompteurPrestataireController extends Controller
     public function indexAction(Request $request,$id)
     {
         $em = $this->getDoctrine()->getManager();
+        $em->getRepository('DominosVodBundle:Code')->RAZDateTemp();
+
         $compteur = new Compteur();
         $entities = $em->getRepository('DominosVodBundle:Compteur')->findByPrestataire($id,array('datepresta'=>'ASC'));
         $prestataire = $em->getRepository('DominosVodBundle:Prestataire')->find($id);

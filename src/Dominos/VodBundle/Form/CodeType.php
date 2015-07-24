@@ -5,8 +5,7 @@ namespace Dominos\VodBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\File;
-use Dominos\VodBundle\Repository\PrestataireRepository;
+
 class CodeType extends AbstractType
 {
     /**
@@ -16,17 +15,7 @@ class CodeType extends AbstractType
      public function buildForm(FormBuilderInterface $builder, array $options)
     {
       
-        $builder->add('codefile', 'file', array(
-                               'constraints' => array(
-                                  new File(array(
-                                    'maxSize'       => '10M',
-                                    //'mimeTypes'   => array("text/csv,application/octet-stream"),
-                                    'maxSizeMessage'       => 'Fichier trop grand',
-                                    //'mimeTypesMessage'   => 'Extension autorisée : csv',
-                                ))
-                               )
-                           )
-                );
+        $builder->add('codefile', 'file');
 
 
     }

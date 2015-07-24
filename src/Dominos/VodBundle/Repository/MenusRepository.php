@@ -8,7 +8,7 @@ use Dominos\VodBundle\Entity\Compteur;
 
 class MenusRepository extends EntityRepository {
 
-	public function getMenusMagByPresta($idmag){
+	public function getMenusMagByPresta($idmag,$nbreCouponTemp){
 		$today = date('d-m-Y').' 23:59:59';
 		$qb = $this->_em->createQueryBuilder()
 			->select('m')
@@ -19,10 +19,10 @@ class MenusRepository extends EntityRepository {
 	       	->setParameter('magnum', $idmag)
 	       	->andWhere('c.datepresta = :today')
 	       	->setParameter('today', $today)
-	       	->andWhere('(c.nbrecodeday - c.nbrecodeused) > 0');
+	       	->andWhere('(c.nbrecodeday - c.nbrecodeused) > :nbrecoupons')
+	       	->setParameter('nbrecoupons', $nbreCouponTemp);
 	
 		return $qb->getQuery()->getOneOrNullresult();
-
 	}
 	
 }
