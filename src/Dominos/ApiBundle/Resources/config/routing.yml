@@ -9,3 +9,11 @@ get_code_to_burn:
 burn_code:
     path:     /code/burn/{payload}
     defaults: { _controller: "DominosApiBundle:Api:burnCode" }
+
+push_test:
+    path:     /push
+    defaults: { _controller: "DominosApiBundle:Api:push" }
+
+client:
+    path:     /client
+    defaults: { _controller: "DominosApiBundle:Api:client" }

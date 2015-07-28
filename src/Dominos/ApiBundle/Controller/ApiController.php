@@ -129,7 +129,12 @@ class ApiController extends Controller
 				    $this->get('mailer')->send($message);
 
 				}
-
+				// Push du compteur dans la socket
+			    $context = new \ZMQContext();
+			    $socket = $context->getSocket(\ZMQ::SOCKET_PUSH, 'my pusher');
+			    $socket->connect("tcp://localhost:5557");
+			    $data = array('category' => 'channel','compteur'=>$compteur->getNbreCodeRestants());
+			    $socket->send(json_encode($data));
 				$apimessage = "ok";
 			} else {
 				$apimessage = "already burn";
@@ -153,4 +158,27 @@ class ApiController extends Controller
 		
 	}
 
+	public function pushAction(){
+		$entryData = array(
+		    'category' => "kittensCategory"
+		  , 'title'    => "Test titre"
+		  , 'article'  => "Contenu"
+		  , 'when'     => time()
+		);
+
+	    // This is our new stuff
+	    $context = new \ZMQContext();
+	    $socket = $context->getSocket(\ZMQ::SOCKET_PUSH, 'my pusher');
+	    $socket->connect("tcp://localhost:5557");
+
+	    $socket->send(json_encode($entryData));
+
+	    return $this->render('DominosApiBundle::push.html.twig');
+	}
+
+
+	public function clientAction(){
+		
+	    return $this->render('DominosApiBundle::client.html.twig');
+	}
 }
