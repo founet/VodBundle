@@ -19,7 +19,7 @@
         {% endfor %}
     <br>  
         {% for entity in entities %}
-            {% if date(entity.datepresta) > date() %}
+            {% if date(entity.datep) > date() %}
                 <div class="white inlineform row">
                     <div class="col-sm-10">{{ render(controller('DominosVodBundle:CompteurPrestataire:editForm', { 'compteur': entity })) }}</div>
                     <div class="col-sm-2">{{ render(controller('DominosVodBundle:CompteurPrestataire:deleteForm', { 'id': entity.id })) }}</div>    
@@ -28,7 +28,7 @@
                 <div class="white inlineform row">
                              <div class="col-sm-5">
                                 <label >Date : </label> 
-                                {{date(entity.datepresta) | date('d-m-Y')}}
+                                {{date(entity.datep) | date('d-m-Y')}}
                              </div>
                             <div class="col-sm-5">
                                 <div class="row">

@@ -74,6 +74,7 @@ doctrine:
         dql:
             datetime_functions:
                 date_format: Dominos\VodBundle\DQL\Mysql\DateFormat
+                str_to_date: Dominos\VodBundle\DQL\Mysql\StrToDate
 
 # Swiftmailer Configuration
 swiftmailer:

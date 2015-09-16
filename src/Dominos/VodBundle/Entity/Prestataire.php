@@ -29,6 +29,13 @@ class Prestataire
     private $nompresta;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="type", type="string", length=255)
+     */
+    private $type;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="startpresta", type="datetime")
@@ -366,5 +373,30 @@ class Prestataire
         return  $nbrecodesnotused + $nbreCodesNonVentilles;
 
     }
+
+
+    /**
+     * Set type
+     *
+     * @param string $type
+     * @return Prestataire
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return string 
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
 
 }

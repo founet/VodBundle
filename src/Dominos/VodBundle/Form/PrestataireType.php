@@ -23,6 +23,9 @@ class PrestataireType extends AbstractType
                             ))
                         )
                     ))
+            ->add('type', 'choice', array(
+                'choices' => array('1' => 'un seul code par commande dans l\'email', 'n' => 'plusieurs codes par commande dans l\'email')
+            ))
             ->add('startpresta','datetime',array(
                                 'widget'=> 'single_text',
                                 'format'=>'dd-MM-yyyy'))

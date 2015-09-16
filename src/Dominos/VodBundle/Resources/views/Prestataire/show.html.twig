@@ -24,6 +24,14 @@
                 <td>{{ prestataire.endpresta|date('Y-m-d H:i:s') }}</td>
             </tr>
             <tr>
+                <th>Type du prestataire</th>
+                {% if prestataire.type == '1' %}
+                <td>un seul code par commande dans l'email</td>
+                {% else %}
+                 <td>plusieurs codes par commande dans l'email</td>
+                {% endif%}
+            </tr>
+            <tr>
                 <th>Nombre de codes </th>
                 <td><b style="color:#006491">{{ prestataire.getNbreCodeTotal }}</b></td>
             </tr>

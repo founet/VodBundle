@@ -1,4 +1,5 @@
 <?php
+
 use Symfony\Component\Yaml\Parser;
 require_once __DIR__.'/../app/bootstrap.php.cache';
 
@@ -21,11 +22,35 @@ catch (Exception $e)
 {
        $message = $e->getMessage();
 }
+
 $today = date('d-m-Y').' 23:59:59';
 $req = $bdd->prepare('SELECT (c.nbrecodeday - c.nbrecodeused) AS compteur FROM vod_compteur AS c WHERE datepresta = :datepresta');
 $req->execute(array('datepresta' => $today));
 
 $compteur = $req->fetch(PDO::FETCH_OBJ);
-$resultat ['compteur'] = $compteur->compteur - $nbre_coupons_temporisation;
 
-echo json_encode($resultat);
+
+if($compteur->compteur > $nbre_coupons_temporisation) {
+	$resultat ['compteur'] = $compteur->compteur - $nbre_coupons_temporisation;
+       
+}else {
+	$resultat ['compteur'] = 0;
+}
+
+$file = "compteur.php";
+$header = '<?php header("Access-Control-Allow-Origin: *");';
+$json = "echo '".json_encode($resultat)."';";
+
+if(!is_null($resultat ['compteur'])){
+
+	$content = $header.$json;
+	file_put_contents($file,$content);
+}else {
+   $content = $header;
+   file_put_contents($file,$content );
+ 
+}
+
+
+
+

@@ -27,4 +27,4 @@ compteur_update_by_presta:
 compteur_delete:
     path:     /{id}/delete
     defaults: { _controller: "DominosVodBundle:CompteurPrestataire:delete" }
-    methods:  [POST, DELETE]
+    methods:  [POST, DELETE, GET]

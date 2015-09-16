@@ -9,3 +9,7 @@ get_code_to_burn:
 burn_code:
     path:     /code/burn/{payload}
     defaults: { _controller: "DominosApiBundle:Api:burnCode" }
+
+is_operation:
+    path:     /isoperation
+    defaults: { _controller: "DominosApiBundle:Api:isOperation" }

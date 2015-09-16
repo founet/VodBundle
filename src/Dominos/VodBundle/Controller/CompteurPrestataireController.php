@@ -27,8 +27,8 @@ class CompteurPrestataireController extends Controller
         $em->getRepository('DominosVodBundle:Code')->RAZDateTemp();
 
         $compteur = new Compteur();
-        $entities = $em->getRepository('DominosVodBundle:Compteur')->findByPrestataire($id,array('datepresta'=>'ASC'));
         $prestataire = $em->getRepository('DominosVodBundle:Prestataire')->find($id);
+        $entities = $em->getRepository('DominosVodBundle:Compteur')->findByPresta($prestataire);
         $compteur->setPrestataire($prestataire);
         $formAdd = $this->createCreateForm($compteur);
 

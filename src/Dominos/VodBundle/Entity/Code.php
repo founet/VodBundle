@@ -12,6 +12,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Code
 {
+    // clé c'encryptage du code
+    const PASSWORD = "ymog0Ni6ct5w2jI9zF4RNwANqxWbDda8137bpTsS";
+    // vecteur d'initialisation
+    const IV = "f9de5c9e446b06bc";
     /**
      * @var integer
      *
@@ -68,6 +72,7 @@ class Code
      */
     public function setCode($code)
     {
+        $code = openssl_encrypt($code, 'aes-256-cbc',self::PASSWORD,0,self::IV);
         $this->code = $code;
 
         return $this;
@@ -80,7 +85,8 @@ class Code
      */
     public function getCode()
     {
-        return $this->code;
+        return openssl_decrypt($this->code, 'aes-256-cbc',self::PASSWORD,0,self::IV);
+        
     }
 
     /**

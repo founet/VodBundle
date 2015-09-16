@@ -42,6 +42,14 @@
                 {{ form_widget(formpresta.endpresta) }}
             </div>
         </div>
+        <div class="form-group">
+             <div class="col-lg-2">
+                {{ form_label(formpresta.type) }}
+             </div>
+            <div class="col-lg-10">
+                {{ form_widget(formpresta.type) }}
+            </div>
+        </div>
         {{ form_end(formpresta) }}
 </div>
 
@@ -87,11 +95,7 @@
             </div>
              {{ form_end(formcode) }}
                  <a href="{{ path('compteur_index_by_presta', { 'id': prestataire.id }) }}" class="btn btn-info">Ventiller les codes</a>
-           
-
         </div>
-   
-  
     </div>
 </div>
 
