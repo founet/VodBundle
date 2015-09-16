@@ -140,6 +140,7 @@ class ApiController extends Controller
 
         $response = [];
 
+
         if(!is_null($code)) {
 
             if(is_null($code->getDateused())){
@@ -174,6 +175,7 @@ class ApiController extends Controller
 
 		}else {
 
+
 			$response['code'] = 500;
 			$response['message'] = "notok";
 	 	}
@@ -185,4 +187,27 @@ class ApiController extends Controller
 
 	}
 
+	public function pushAction(){
+		$entryData = array(
+		    'category' => "kittensCategory"
+		  , 'title'    => "Test titre"
+		  , 'article'  => "Contenu"
+		  , 'when'     => time()
+		);
+
+	    // This is our new stuff
+	    $context = new \ZMQContext();
+	    $socket = $context->getSocket(\ZMQ::SOCKET_PUSH, 'my pusher');
+	    $socket->connect("tcp://localhost:5557");
+
+	    $socket->send(json_encode($entryData));
+
+	    return $this->render('DominosApiBundle::push.html.twig');
+	}
+
+
+	public function clientAction(){
+		
+	    return $this->render('DominosApiBundle::client.html.twig');
+	}
 }

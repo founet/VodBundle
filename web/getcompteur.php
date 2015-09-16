@@ -14,12 +14,14 @@ $nbre_coupons_temporisation = $value['parameters']['nbre_coupons_temporisation']
 
 try
 {
+
 	$bdd = new PDO('mysql:host='.$host.';dbname='.$dbname.';charset=utf8', $username,$password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+
 
 }
 catch (Exception $e)
 {
-       $message = $e->getMessage();
+       print_r($e->getMessage());
 }
 $today = date('d-m-Y').' 23:59:59';
 $req = $bdd->prepare('SELECT (c.nbrecodeday - c.nbrecodeused) AS compteur FROM vod_compteur AS c WHERE datepresta = :datepresta');

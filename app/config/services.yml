@@ -4,6 +4,6 @@ parameters:
 #    parameter_name: value
 
 services:
-#    service_name:
-#        class: AppBundle\Directory\ClassName
+    pusher:
+        class: Dominos\ApiBundle\Pusher
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
